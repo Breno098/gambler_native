@@ -3,12 +3,12 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 
-export default function Init() {
+export default function Home() {
   const navigation = useNavigation();
 
   return (
       <View style={styles.container}>
-        <Image style={styles.logo} source={require('../../images/Logo.png')}/>
+        <Image style={styles.logo} source={require('../../../images/Logo.png')}/>
 
         <Text style={styles.logoText}>
            Fut Gamblers
