@@ -59,7 +59,7 @@ export default function SignUp() {
               onPress={ handleOpenEye }
               name={ openEye ? 'eye' : 'eye-slash' }
               size={30}
-              color="#ff636b"
+              color="#00f018"
               style={{ marginBottom: 15, marginLeft: 5 }}
             />
           </View>
@@ -82,7 +82,7 @@ export default function SignUp() {
               onPress={ handleOpenEye }
               name={ openEye ? 'eye' : 'eye-slash' }
               size={30}
-              color="#ff636b"
+              color="#00f018"
               style={{ marginBottom: 15, marginLeft: 5 }}
             />
           </View>
@@ -116,14 +116,14 @@ const styles = StyleSheet.create({
 
   label: {
     fontSize: 25,
-    color: '#ff636b',
+    color: '#00f018',
     width: '100%',
   },
 
   input: {
     fontSize: 20,
-    color: '#ff636b',
-    borderBottomColor: '#ff636b',
+    color: '#00f018',
+    borderBottomColor: '#00f018',
     borderBottomWidth: 1,
     width: '100%',
     paddingLeft: 15
@@ -136,21 +136,21 @@ const styles = StyleSheet.create({
 
   labelPass: {
     fontSize: 25,
-    color: '#ff636b',
+    color: '#00f018',
     width: '100%',
   },
 
   inputPass: {
     fontSize: 20,
-    color: '#ff636b',
-    borderBottomColor: '#ff636b',
+    color: '#00f018',
+    borderBottomColor: '#00f018',
     borderBottomWidth: 1,
     flex: 80,
     paddingLeft: 15
   },
 
   singUpButton: {
-    backgroundColor: '#ff636b',
+    backgroundColor: '#00f018',
     borderWidth: 1,
     height: 60,
     width: '85%',

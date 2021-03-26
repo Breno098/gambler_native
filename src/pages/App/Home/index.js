@@ -1,118 +1,53 @@
-import React, { useState, useContext } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Container, Image } from 'react-native';
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text} from 'react-native';
 
+import Registrations from '../Registrations';
+import Settings from '../Settings'
 
-export default function Home() {
-  const navigation = useNavigation();
+const Tab = createBottomTabNavigator();
 
-  return (
-      <View style={styles.container}>
-        <View style={styles.logo}>
-          <Image style={{ height: 100, width: 100 }} source={require('../../../images/Logo.png')}/>
-        </View>
-
-        <View style={styles.cardGroup}>
-          <View style={styles.card}>
-            <Image 
-              style={styles.cardImage} 
-              source={require('../../../images/cadastros.jpg')}
-              resizeMode = 'stretch'
-            />
-
-            <View style={styles.transparentView}>
-                <View style={styles.logoViewStyle}>
-                  <Text style={styles.cardImageText}> Cadastros </Text>
-                </View>
-            </View>
-          </View>
-
-          <View style={styles.card}>
-            <Image 
-              style={styles.cardImage} 
-              source={require('../../../images/cadastros.jpg')}
-              resizeMode = 'stretch'
-            />
-
-            <View style={styles.transparentView}>
-                <View style={styles.logoViewStyle}>
-                  <Text style={styles.cardImageText}> Cadastros </Text>
-                </View>
-            </View>
-          </View>
-
-          <View style={styles.card}>
-            <Image 
-              style={styles.cardImage} 
-              source={require('../../../images/cadastros.jpg')}
-              resizeMode = 'stretch'
-            />
-
-            <View style={styles.transparentView}>
-                <View style={styles.logoViewStyle}>
-                  <Text style={styles.cardImageText}> Cadastros </Text>
-                </View>
-            </View>
-          </View>
-
-        </View>
-        
-      </View>
-  );
+const icons = {
+    Registrations: {
+      label: 'Cadastros',
+      icon: 'pencil'
+    },
+    Settings: {
+        label: 'Ajustes',
+        icon: 'cogs'
+      }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    width: '100%'
-  },
+export default function Registers(){
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    const { icon, label } = icons[route.name]
+                    return (
+                    <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                        <Icon name={icon} size={size} color={color} />
+                        <Text style={{ fontSize: 11, color: color  }}> { label } </Text>
+                    </View>)
+                }
+            })}
 
-  logo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '10%'
-  },
-
-  cardGroup: {
-    height: '80%',
-    width: '90%',
-  },
-
-  cardImage: { 
-    width: '100%', 
-    height: '100%', 
-    position: 'relative',
-    borderRadius: 15,
-    flex: 1,
-    opacity: 0.9,
-    marginTop: 15
-  },
-
-  cardImageText: {
-    fontSize: 35,
-    color: '#fff',
-    marginTop: 15,
-    marginLeft: 15
-  },
-
-  card: {
-    width: '100%',
-    flex: 1,
-    borderRadius: 15
-  },
-
-  transparentView: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    position: 'absolute'
-  },
-
-  logoViewStyle: {
-      justifyContent: 'center',
-      alignItems: 'center',
-  },
-});
+            tabBarOptions={{
+                activeTintColor: '#00f018',
+                inactiveTintColor: '#fff',
+                style: {
+                    backgroundColor: 'rgba(0, 0, 0, 1)',
+                    height: 50,
+                    paddingBottom: 5,
+                    paddingTop: 5,
+                    borderTopColor: '#00d0ff',
+                    borderTopWidth: 1
+                },
+                showLabel: false,
+        }}>
+            <Tab.Screen name="Registrations"  component={Registrations}/>
+            <Tab.Screen name="Settings"  component={Settings}/>
+        </Tab.Navigator>
+    )
+}

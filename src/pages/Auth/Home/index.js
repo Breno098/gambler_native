@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ff636b',
+    backgroundColor: '#00f018',
     width: '100%'
 
     // rgba(0, 0, 0, 1,)
@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
   goLoginText: {
     fontSize: 25,
     textAlign: 'center',
-    color: '#ff636b'
+    color: '#00f018'
   }
 });

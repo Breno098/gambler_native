@@ -4,7 +4,7 @@ import axios from "axios";
 // http://localhost:3000
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
+  baseURL: "https://btpkq8ic.srv-45-34-12-242.webserverhost.top/api",
 });
 
 export default api;

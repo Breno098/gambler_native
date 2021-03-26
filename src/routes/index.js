@@ -12,7 +12,7 @@ export default function Routes(){
     if(_loading){
         return(
             <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', backgroundColor: '#000' }}>
-                <ActivityIndicator size="large" color="#ff636b"/>
+                <ActivityIndicator size="large" color="#00f018"/>
             </View>
         )
     }
