@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Animated, ScrollView, Image, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import api from '../../../services/api';
 
 import App from '../../../components/App';
+import SlideButtonRoute from '../../../components/SlideButtonRoute';
+import SlideListEdit from '../../../components/SlideListEdit';
 
 export default function Country() {
     const navigation = useNavigation();
+
+    const [country] = useState(new Animated.Value(0))
+    const [add] = useState(new Animated.Value(0))
+    const [edit, setEdit] = useState([])
 
     const [countries, setCountries] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -18,102 +24,95 @@ export default function Country() {
 
     const loadList = async () => {
         setLoading(true);
-        console.log('loadlist');
         await api.get('country').then(response => {
+            let animateds = [];
+            for (let index = 0; index < response.data.countries.length; index++) {
+                animateds.push(new Animated.Value(0))
+            }
+            setEdit(animateds)
             setCountries(response.data.countries);
             setLoading(false);
         })
     }
 
     return (
-        <App style={{ justifyContent: 'space-between' }}>
-            <Image 
-                style={styles.image} 
-                source={require('../../../images/forms-register/country.jpg')}
-            />
-            <View style={ styles.list }>
-                {   
-                    loading 
-                    ? 
-                    <View>
-                        <ActivityIndicator size="large" color="#00f018"/>
-                        <Text style={{ color: '#00f018', marginTop: 15 }}> Carregando... </Text>
-                    </View>
-                    :
-                    <ScrollView>
-                        { countries.map(country => (
-                            <View key={country.id} style={styles.card}> 
-                                <View style={styles.cardBody}>
-                                    <Text style={styles.itemListText}>
-                                        ID: {country.id} 
-                                    </Text>
-                                    <Text style={styles.itemListText}>
-                                        Nome: {country.name} 
-                                    </Text>
-                                </View>
-                                <TouchableOpacity 
-                                    style={styles.buttonCard}
-                                    onPress={() => navigation.navigate('FormCountry', { country }) }
-                                >
-                                    <Text style={styles.buttonText}>
-                                        EDITAR
-                                    </Text>
-                                    <Icon name="pencil" size={15} color="#00f018" style={{ marginLeft: 5 }}/>
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </ScrollView>
-                }
+        <App style={{ justifyContent: 'space-between', alignItems: 'center' }}>
 
+            <View style={{ width: '100%', height: '10%', justifyContent: 'space-between', alignItems: 'center' }}>
+                <SlideButtonRoute
+                    animated={country}
+                    direction="left"
+                    routeName="Registrations"
+                    icon="arrow-left"
+                    title="Voltar"
+                    height={50}
+                />
             </View>
+            
+            {
+                loading 
+                ?
+                <View>
+                    <ActivityIndicator size="large" color="#00fff7"/>
+                    <Text style={{ color: '#00fff7', marginTop: 15 }}> Carregando... </Text>
+                </View>
+                :
+                <View style={{ width: '100%', height: '70%' }}>
+                    <FlatList
+                        data={countries}    
+                        renderItem={({item, index}) => (
+                            <SlideListEdit
+                                animated={edit[index]}
+                                direction="right"
+                                routeName="FormCountry"
+                                routeParams={{ country: item }}
+                                body={{
+                                    id: item.id,
+                                    title:item.name,
+                                    itens: [], 
+                                }}
+                            />
+                        )}
+                    />
+                </View>
+            }
 
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => navigation.navigate('FormCountry') }>
-                <Text style={styles.buttonText}>
-                    ADICIONAR REGISTRO
-                </Text>
-                <Icon name="plus" size={15} color="#00f018" style={{ marginLeft: 5 }}/>
-            </TouchableOpacity>
-        
+            <View style={{ width: '100%', height: '10%', justifyContent: 'space-between', alignItems: 'center' }}>
+                <SlideButtonRoute
+                    animated={add}
+                    direction="right"
+                    routeName="FormCountry"
+                    icon="plus"
+                    title="Add"
+                    height={50}
+                />
+            </View>
         </App>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'rgba(0, 0, 0, 1)',
-        width: '100%',
-        paddingTop: 50,
-        paddingBottom: 20,
-    },
-
     image: { 
         width: '90%', 
-        height: '10%', 
-        borderRadius: 5,
-        opacity: 0.8
+        height: 90, 
+        borderRadius: 30,
+        opacity: 0.4,
+        marginBottom: 30
     },
 
     list: {
         height: '75%',
-        width: '90%',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 3,
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
     }, 
 
     card: {
         width: '100%',
-        height: 60,
-        borderTopLeftRadius: 50,
-        borderBottomLeftRadius: 50,
-        borderTopRightRadius: 6,
-        borderBottomRightRadius: 6,
-        marginBottom: 7,
-        flexDirection: 'row',
+        height: 80,
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        // borderTopLeftRadius: 100,
+        // borderBottomLeftRadius: 100,
     },
 
     cardBody: {
@@ -141,20 +140,4 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#000'
     },
-
-    buttonText: {
-        fontSize: 15,
-        color: '#00f018'
-    },
-
-    buttonAdd: {
-        flexDirection: 'row',
-        width: '90%',
-        height: 50,
-        borderRadius: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderColor: '#00f018',
-        borderWidth: 1,
-    }
 });

@@ -1,23 +1,24 @@
 import React from 'react';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 
-import Home from '../pages/App/Home';
+import Registrations from '../pages/App/Registrations';
 import Country from '../pages/App/Country';
 import FormCountry from '../pages/App/Country/form'
+
+import Player from '../pages/App/Player';
 
 const AppStack = createStackNavigator();
 
 export default function AppRoutes(){
     return(
         <AppStack.Navigator 
-            headerMode="none"
             screenOptions={{
                 gestureEnabled: false,
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}>
             <AppStack.Screen 
-                name="Home" 
-                component={Home}
+                name="Registrations" 
+                component={Registrations}
                 options={{ 
                     headerShown: false,
                     gestureDirection: "horizontal-inverted"
@@ -27,8 +28,9 @@ export default function AppRoutes(){
                 name="Country" 
                 component={Country}
                 options={{ 
+                    gestureDirection: "horizontal",
+                    title: 'Países',
                     headerShown: false,
-                    gestureDirection: "horizontal"
                 }}
             />
             <AppStack.Screen 
@@ -39,6 +41,16 @@ export default function AppRoutes(){
                     gestureDirection: "horizontal"
                 }}
             />
+            <AppStack.Screen 
+                name="Player" 
+                component={Player}
+                options={{ 
+                    headerShown: false,
+                    gestureDirection: "horizontal-inverted"
+                }}
+            />
+            
+
         </AppStack.Navigator>
     );
 }
