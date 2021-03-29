@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Animated, TouchableOpacity, Dimensions, Image, Text, View } from 'react-native';
+import { Animated, TouchableOpacity, Dimensions, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function SlideButtonRoute({ direction, routeName, icon, label, width, height, image, iconColor, routeParams }) {
+export default function SlideButtonBack({ direction, width, height }) {
   const navigation = useNavigation();
 
   const [item] = useState(new Animated.Value(0))
@@ -11,21 +11,10 @@ export default function SlideButtonRoute({ direction, routeName, icon, label, wi
   const move = () => {
     let toValue = direction === 'right' ? Dimensions.get('screen').height / 2 : -(Dimensions.get('screen').height / 2);
     Animated.timing(item, {toValue, duration: 350}).start()
-    setTimeout(() => navigation.navigate(routeName, routeParams ?? {}), 370);
+    setTimeout(() => navigation.goBack(), 370);
     setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500}).start(), 400)
   }
 
-  const images = () => {
-    switch (image) {
-        case "player":  return require('../../images/menu-register/player.jpg');
-        case "country":   return require('../../images/menu-register/country.jpg');
-        case "stadium": return require('../../images/menu-register/stadium.jpg');
-        case "team":    return require('../../images/menu-register/team.jpg');
-        case "game":    return require('../../images/menu-register/game.jpg');
-        case "competition":    return require('../../images/menu-register/competition.jpg');
-      }
-  }
-  
   return (
         <Animated.View style={{
             width: '100%',
@@ -33,7 +22,7 @@ export default function SlideButtonRoute({ direction, routeName, icon, label, wi
             alignItems: 'center',
             justifyContent: 'space-between',
             borderRadius: 100,
-            height: height ? height : 80,
+            height: height ? height : 50,
             transform: [{translateX: item}]
         }}>
             <TouchableOpacity onPress={move} style={{ 
@@ -51,20 +40,10 @@ export default function SlideButtonRoute({ direction, routeName, icon, label, wi
                 borderBottomLeftRadius: direction === 'right' ? 100 : 0
             }}>
                 <View style={{ height: '100%', width: '40%', alignItems: 'center', justifyContent: 'center' }}>
-                    {
-                        image
-                        ?
-                        <Image style={{ width: height ? height -15 : 65,  height: height ? height -15 : 65 }} source={images()}/>
-                        :
-                        icon
-                        ?
-                        <Icon name={icon} size={20} color={iconColor ? iconColor : '#000'} style={{ marginLeft: 5 }}/>
-                        :
-                        null
-                    }
+                    <Icon name='arrow-left' size={20} color='#000' style={{ marginLeft: 5 }}/>
                 </View>
                 <View style={{ height: '100%', width: '60%', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 25, padding: 10 }}> { label ?? '' } </Text>
+                    <Text style={{ fontSize: 25, padding: 10 }}> Voltar </Text>
                 </View>
             </TouchableOpacity>
         </Animated.View>  

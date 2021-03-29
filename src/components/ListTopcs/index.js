@@ -1,33 +1,30 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { AppContext } from '../../providers/app';
+import React from 'react';
+import { View, Text } from 'react-native';
 
 export default function ListTopcs({ itens }) {
-    const { _colors } = useContext(AppContext);
 
     return (
         <View style={{ padding: 8, width: '100%' }}>
             { 
-                itens && typeof itens === 'object' 
+                itens 
                 ?
-                <View style={{ width: '100%', marginBottom: 10 }}>
-                    <Text style={{ fontSize: 22, color: _colors._label(), marginBottom: 5 }}> {itens?.title} </Text>
-                    { 
-                        itens.itens 
-                        ? 
-                        itens.itens.map(item => (
-                            <Text style={{ fontSize: 18, color: _colors._label() }} key={item}> {item} </Text>
-                        )) 
-                        :
+                itens.map(item => (
+                    <View style={{ width: '100%', marginBottom: 10 }}>
+                        <Text style={{ fontSize: 22, marginBottom: 5 }}> {item?.title} </Text>
+                    {
+                        item.list
+                        ?
+                        item.list.map(list => (
+                            <Text style={{ fontSize: 18, color: '#000' }} key={list}> {list} </Text>
+                        ))
+                        : 
                         null
-                } 
-                </View>
+                    }
+                    </View>
+                ))
                 :
                 null
             } 
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-})

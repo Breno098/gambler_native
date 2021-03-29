@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, FlatList, Animated, ScrollView, Image, ActivityIndicator } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, FlatList, Animated, ActivityIndicator } from 'react-native';
 import api from '../../../services/api';
 
 import App from '../../../components/App';
 import SlideButtonRoute from '../../../components/SlideButtonRoute';
 import SlideListEdit from '../../../components/SlideListEdit';
+import SlideButtonBack from '../../../components/SlideButtonBack';
+import Button from '../../../components/Button';
+import Modal from '../../../components/Modal';
 
 export default function Country() {
-    const navigation = useNavigation();
-
-    const [country] = useState(new Animated.Value(0))
-    const [add] = useState(new Animated.Value(0))
-    const [edit, setEdit] = useState([])
-
     const [countries, setCountries] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [modal, setModal] = useState(false);
+    const [filters, setFilters] = useState(null);
 
     useEffect(() => {
         loadList();
     }, []);
 
-    const loadList = async () => {
+    const loadList = async (body) => {
         setLoading(true);
-        await api.get('country').then(response => {
+        await api.post('filter/country', body).then(response => {
             let animateds = [];
             for (let index = 0; index < response.data.countries.length; index++) {
                 animateds.push(new Animated.Value(0))
             }
-            setEdit(animateds)
             setCountries(response.data.countries);
             setLoading(false);
         })
@@ -39,105 +36,59 @@ export default function Country() {
         <App style={{ justifyContent: 'space-between', alignItems: 'center' }}>
 
             <View style={{ width: '100%', height: '10%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <SlideButtonRoute
-                    animated={country}
-                    direction="left"
-                    routeName="Registrations"
-                    icon="arrow-left"
-                    title="Voltar"
-                    height={50}
-                />
+                <SlideButtonBack direction="left"/>
             </View>
             
-            {
-                loading 
-                ?
-                <View>
+            <View style={{ width: '100%', height: '65%', justifyContent: 'center'}}>
+                {
+                    loading 
+                    ?
                     <ActivityIndicator size="large" color="#00fff7"/>
-                    <Text style={{ color: '#00fff7', marginTop: 15 }}> Carregando... </Text>
-                </View>
-                :
-                <View style={{ width: '100%', height: '70%' }}>
-                    <FlatList
-                        data={countries}    
-                        renderItem={({item, index}) => (
-                            <SlideListEdit
-                                animated={edit[index]}
-                                direction="right"
-                                routeName="FormCountry"
-                                routeParams={{ country: item }}
-                                body={{
-                                    id: item.id,
-                                    title:item.name,
-                                    itens: [], 
-                                }}
-                            />
-                        )}
-                    />
-                </View>
-            }
+                    :
+                        <FlatList
+                            data={countries}    
+                            renderItem={({item}) => (
+                                <SlideListEdit
+                                    direction="right"
+                                    routeName="FormCountry"
+                                    routeParams={{ country: item }}
+                                    body={{
+                                        id: item.id,
+                                        title:item.name,
+                                        itens: [], 
+                                    }}
+                                    height={50}
+                                />
+                            )}
+                        />
+                }
+            </View>
+
+
+            <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between',  height: '10%' }}>
+                <Button
+                    label="Filtrar"
+                    icon="filter"
+                    onPress={async () => {
+                        loadList({order: ['name']});
+                    }}
+                    style={{ width: '48%' }}
+                />
+            </View>
 
             <View style={{ width: '100%', height: '10%', justifyContent: 'space-between', alignItems: 'center' }}>
                 <SlideButtonRoute
-                    animated={add}
                     direction="right"
                     routeName="FormCountry"
                     icon="plus"
-                    title="Add"
+                    label="Add"
                     height={50}
                 />
             </View>
+
+            <Modal visible={modal} title="Filtrar" onRequestClose={() => setModal(false)} icon="filter">
+
+            </Modal>
         </App>
   );
 }
-
-const styles = StyleSheet.create({
-    image: { 
-        width: '90%', 
-        height: 90, 
-        borderRadius: 30,
-        opacity: 0.4,
-        marginBottom: 30
-    },
-
-    list: {
-        height: '75%',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }, 
-
-    card: {
-        width: '100%',
-        height: 80,
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-        // borderTopLeftRadius: 100,
-        // borderBottomLeftRadius: 100,
-    },
-
-    cardBody: {
-        width: '75%',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        paddingLeft: 20,
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        borderTopLeftRadius: 50,
-        borderBottomLeftRadius: 50,
-    },
-
-    buttonCard: {
-        flexDirection: 'row',
-        width: '25%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderTopRightRadius: 5,
-        borderBottomRightRadius: 5,
-        borderColor: '#00f018',
-        borderWidth: 1
-    },
-
-    itemListText: {
-        fontSize: 15,
-        color: '#000'
-    },
-});

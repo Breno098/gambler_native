@@ -1,33 +1,49 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, ActivityIndicator, Animated, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { AppContext } from '../../providers/app';
 
-export default function Input({ value, onChangeText, icon, loading, placeholder, label, color, disabled }) {
+export default function Input({ value, onChangeText, icon, loading, placeholder, label, color, disabled, error, errorText }) {
 
-    const { _colors } = useContext(AppContext);
-    
+    const [errorAnimated] = useState(new Animated.Value(0));
+    const inputEl = useRef(null);
+
+    useEffect(() => {
+        if(error === true){
+            Animated.timing(errorAnimated, {toValue: 30, duration: 350}).start()
+            setTimeout(() => Animated.timing(errorAnimated, {toValue: 0, duration: 500}).start(), 400)
+        }
+    }, [error])
+
     return (
-        <View style={styles.main}>
-            <Text 
-                style={{ 
-                  color: label && label.color ? label.color : _colors._label(),
-                  ...styles.label
-                }}
-            >
-                { label && typeof label === 'string' ? label : label && label.text ? label.text : '' }
-            </Text>
+        <TouchableOpacity style={styles.main} onPress={() => inputEl.current.focus() }>
+            {
+                label
+                ?
+                <Text 
+                    onPress={() => inputEl.current.focus() }
+                    style={{ 
+                    color: label && label.color ? label.color : "#000",
+                    ...styles.label
+                    }}
+                >
+                    { label && typeof label === 'string' ? label : label && label.text ? label.text : '' }
+                </Text>
+                :
+                null
+            }
+         
 
             <View   
                 style={{
-                        borderBottomColor: disabled ? '#eee' : color ? color : _colors._label(),
+                        borderBottomColor: disabled ? '#eee' : error ? 'rgba(255, 0, 0, 0.4)' : color ? color : "#00fff7",
                         flexDirection: icon && icon.local === 'pre-pend' ? 'row-reverse' : 'row',
                         ...styles.inputArea
                     }}  
             >
                 <TextInput 
+                    ref={inputEl}
                     style={{
-                        color: _colors._label(), 
+                        color: "#000", 
                         ...styles.input
                     }}  
                     value={value ? value : null}
@@ -46,7 +62,7 @@ export default function Input({ value, onChangeText, icon, loading, placeholder,
                             icon.size ? icon.size : 15
                         }  
                         color={
-                            disabled ? '#eee' : icon.color ? icon.color : _colors._label()
+                            disabled ? '#eee' : icon.color ? icon.color : "#00fff7"
                         } 
                         style={{ 
                             marginLeft: 8, 
@@ -59,7 +75,7 @@ export default function Input({ value, onChangeText, icon, loading, placeholder,
                     <ActivityIndicator 
                         size={15} 
                         color={
-                            disabled ? '#eee' : icon && icon.color ? icon.color : color ? color : _colors._label()
+                            disabled ? '#eee' : icon && icon.color ? icon.color : color ? color : "#00fff7"
                         }
                         style={{ 
                             marginLeft: 8,
@@ -71,7 +87,31 @@ export default function Input({ value, onChangeText, icon, loading, placeholder,
 
                 }
             </View>
-        </View>
+
+            {
+                error
+                ?
+                <Animated.View style={{
+                    width: '100%',
+                    marginTop: 5,
+                    marginLeft: 10,
+                    transform: [{translateX: errorAnimated}]
+                }}>
+                    <Text 
+                        style={{ 
+                            color: "rgba(255, 0, 0, 0.4)",
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        { errorText ?? '' }
+                    </Text>
+                </Animated.View>
+
+                : 
+                null
+            }
+        </TouchableOpacity>
     );
 }
 

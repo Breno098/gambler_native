@@ -1,106 +1,62 @@
-import React, { useContext } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, ActivityIndicator  } from 'react-native';
+import React from 'react';
+import { SafeAreaView, Text, View, ActivityIndicator  } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { AppContext } from '../../providers/app';
 
-export default function FloatCard({ disabled, size, left, top, label, onPress, icon, loading, color, type, style }) {
-
-    const { _colors } = useContext(AppContext);
-
-    const sizeHeight = () => {
-        if(typeof size === 'string'){
-            if(size === 'large')  return 150
-            if(size === 'medium') return 100
-            if(size === 'small')  return 50
-        }
-        if(height) return size.height;
-        return 75;
-    }
-
-    const sizeWidth = () => {
-        if(typeof size === 'string'){
-            if(size === 'large')  return 150
-            if(size === 'medium') return 100
-            if(size === 'small')  return 50
-        }
-        if(width) return width;
-        return 75;
-    }
-
-    const borderRadiusType = () => {
-        return type && type.indexOf('circle') !== -1 ? 100 : type && type.indexOf('rounded') !== -1 ? 20 : 5;
-    }
-
-    const borderWidthType = () => {
-        return type && type.indexOf('elevation') !== -1 ? 2 : 0;
-    }
-
-    const elevationType = () => {
-        return type && color && type.indexOf('elevation') !== -1 ? 10 : 0;
-    }
+export default function FloatCard({ disabled, left, top, onPress, icon, iconColor, loading, color, label, labelColor, labelSize, style }) {
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={{
+            flex: 1,
+            position: 'absolute',
+            width: '100%',
+            height: '100%'
+        }}>
             <View 
                 onPress={
                     onPress && !disabled && !loading ? onPress : ()=>{}
                 } 
                 style={{
-                    width:  sizeWidth(),
-                    height: sizeHeight(),
-
-                    borderRadius:      borderRadiusType(),
-                    borderRightWidth:  borderWidthType(),
-                    borderBottomWidth: borderWidthType(),
-                    elevation:         elevationType(),
-
                     marginTop:  top  ? top  : 0,
                     marginLeft: left ? left : 0, 
-
-                    backgroundColor: color ? color : _colors.theme,
+                    borderWidth: 1,
+                    borderRadius: 50,
+                    borderColor: '#00fff7',
+                    backgroundColor: color ? color : "#f2f1f1",
                     alignItems: 'center',
                     justifyContent: 'center',
+                    width: 50, 
+                    height: 50,
                     ...style
             }}>
                 
                 {
-                    label || typeof label === 'string' || typeof label === 'number'
+                    label
                     ? 
                     <Text style={{ 
-                        color: label.color ? label.color : _colors._label(), 
-                        fontSize: label.size ? label.size : 15, 
+                        color: labelColor ? labelColor : "#000", 
+                        fontSize: labelSize ? labelSize : 15,  
                     }}>
-                        { 
-                            typeof label === 'string' ? label : 
-                            typeof label === 'number' ? label : 
-                            label.text                ? label.text : '' 
-                        }
+                       { label ?? '' }
                     </Text>
                     :
                     null
                 }
                 {
-                    icon && (typeof icon === 'string' || icon.name) && !loading
+                    icon && !loading
                     ?
                     <Icon 
-                        name={
-                            icon.name ? icon.name : icon ? icon : null
-                        }
-                        size={
-                            icon.size ? icon.size : 15
-                        }  
-                        color={
-                            icon.color ? icon.color : _colors._label()
-                        } 
+                        name={icon}
+                        size={15}  
+                        color={iconColor ? iconColor : "#000"} 
+                        style={{ marginLeft: 8 }}
                     />
                     :
                     loading
                     ?
                     <ActivityIndicator 
-                        size={size === 'small' ? 20 : 35} 
-                        color={
-                            icon && icon.color ? icon.color :  _colors._label()
-                        }
+                        size={18} 
+                        color={icon && iconColor ? iconColor : "#000"}
+                        style={{ marginLeft: 8 }}
                     />
                     :
                     null
@@ -109,12 +65,3 @@ export default function FloatCard({ disabled, size, left, top, label, onPress, i
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        position: 'absolute',
-        width: '100%',
-        height: '100%'
-    },
-})

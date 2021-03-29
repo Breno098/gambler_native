@@ -1,11 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Modal as ModelReact, StyleSheet, Text, ActivityIndicator, View} from 'react-native';
-import { AppContext } from '../../providers/app';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Modal({ children, animationType, color, style, visible, title, onRequestClose, icon, loading}) {
-    const { _colors } = useContext(AppContext);
-
+export default function Modal({ children, animationType, style, visible, title, onRequestClose, icon, loading}) {
     return (
         <View style={styles.centeredView}>
           <ModelReact
@@ -18,8 +15,8 @@ export default function Modal({ children, animationType, color, style, visible, 
                 <View style={{ 
                     borderRadius:      15,
                     borderWidth: 1,
-                    borderTopColor: _colors._main,
-                    backgroundColor: color ? color : _colors._modal(),
+                    borderTopColor: '#00fff7',
+                    backgroundColor: '#fff',
                     width: '101%',
                     height: 500,
                     padding: 3,
@@ -30,7 +27,7 @@ export default function Modal({ children, animationType, color, style, visible, 
                         ? 
                         <View style={styles.title}>
                             <View style={{ width: '85%' }}>
-                                <Text style={{ color:  title.color ? title.color : _colors._label(), fontSize: 25 }}>
+                                <Text style={{ color:  title.color ? title.color : '"00fff7"', fontSize: 25 }}>
                                     { title.text ? title.text : title  }
                                 </Text>
                             </View>
@@ -41,7 +38,7 @@ export default function Modal({ children, animationType, color, style, visible, 
                                     <Icon 
                                         name={icon.name ? icon.name : icon ? icon : null}
                                         size={icon.size ? icon.size : 15}  
-                                        color={icon.color ? icon.color : _colors._label()} 
+                                        color={icon.color ? icon.color : "00fff7"} 
                                     />
                                 </View>
                                 :
@@ -49,7 +46,7 @@ export default function Modal({ children, animationType, color, style, visible, 
                                 ?
                                 <ActivityIndicator 
                                     size={icon && icon.size ? icon.size : 15} 
-                                    color={icon && icon.color ? icon.color :  _colors._label()}
+                                    color={icon && icon.color ? icon.color :  "00fff7"}
                                 />
                                 :
                                 null
@@ -65,7 +62,6 @@ export default function Modal({ children, animationType, color, style, visible, 
         </View>
       );
 }
-
 
 const styles = StyleSheet.create({
     centeredView: {

@@ -6,21 +6,27 @@ import api from '../../../services/api';
 import Button from '../../../components/Button';
 import Input from '../../../components/Input';
 import App from '../../../components/App';
-import FloatCard from '../../../components/FloatCard';
 import Modal from '../../../components/Modal';
 import ListTopcs from '../../../components/ListTopcs'
+import SlideButtonBack from '../../../components/SlideButtonBack';
+import InfoCard from '../../../components/InfoCard'
 
 export default function Form({ route }) {
     const navigation = useNavigation();
-    
-    const [country, setCountry] = useState(route.params?.country);
-    const [loading, setLoading] = useState(false);
 
+    const [country, setCountry] = useState(route.params?.country);
+    const [countryInputError, setCountryInputError] = useState(false);
+
+    const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState({ show: false });
 
-    const [icon, setIcon] = useState({name: country ? 'edit' : 'save'});
+    const [icon, setIcon] = useState(country ? 'edit' : 'save');
 
     const save = async () => {
+        if((!country) || (country && !country.name)){
+            setCountryInputError(true);
+            return;
+        }
         setLoading(true);
         if(country && country.id){
             await api.put(`country/${country.id}`, country)
@@ -40,10 +46,7 @@ export default function Form({ route }) {
             .then(() => success())
             .catch(() => error('Erro ao deletar', [{
                 title: 'Possiveis erros:',
-                itens: [ 
-                    ' - País vinculado a outros registros',
-                    ' - Erro no servidor.'
-                ]
+                list: [ ' - País vinculado a outros registros', ' - Erro no servidor. Aguarde e tente novamente em 1 minuto.' ]
             }]))
         } else {
             navigation.navigate('Country')
@@ -51,44 +54,60 @@ export default function Form({ route }) {
     }
 
     const success = () => {
-        setIcon({ name: 'check', color: '#00f018' });
+        setIcon('check');
         setLoading(false);
         setTimeout(() => navigation.navigate('Country'), 1000)
     }
 
-    const error = (title, message) => {
-        setIcon({ name: 'check', color: '#00f018' });
-        setModal({ show: true, title, message });
+    const error = (title, list) => {
+        setIcon('exclamation');
+        setModal({ show: true, title, list });
         setLoading(false);
     }
 
     return (
-        <App style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <FloatCard type="elevation" top={40} left={15} color='#00fff7' size="small" label={country?.id ?? 'NR'}/>
-            <FloatCard type="elevation" top={40} left={345} color='#fff' size="small" icon={icon} loading={loading} elevation={0}/>
-           
-            <Modal 
-                visible={modal.show} 
-                title="Erro" 
-                onRequestClose={() => setModal({ show: false })}
-                icon="exclamation"
-            >
-                <ListTopcs itens={modal.message}/>
-            </Modal>
+        <App style={{ justifyContent: 'space-around', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'flex-start', alignItems: 'center', height: '10%' }}>
+                <View style={{ width: '75%' }}>
+                    <SlideButtonBack direction="left"/>
+                </View>
+                <InfoCard style={{ width: '20%', flexDirection: 'row' }} loading={loading} icon={icon}>
+                    <Text> {country?.id ?? 'NR'}  </Text>
+                </InfoCard>
+            </View>
 
-            <View style={{ flexDirection: 'row', width: '90%', marginTop: 60  }}>
+            <View style={{ width: '90%', height: '70%', margin: 60 }}>
                 <Input
                     label="Nome"
                     value={country ? country.name : null}
-                    onChangeText={(name) => setCountry({ name, id: country ? country.id : null })}
+                    onChangeText={(name) => { 
+                        setCountry({ name, id: country ? country.id : null });
+                        setCountryInputError(false);
+                    }}
                     loading={loading}
+                    error={countryInputError}
+                    errorText="Campo obrigatório"
                 />
             </View>
 
-            <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between' }}>
-                <Button color='#00f018' label="SALVAR" icon="save" width='49.7%'  onPress={save} />
-                <Button color='#f00000' label="DELETAR" icon="save" width='49.7%'  onPress={deleteItem}/>
+            <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between',  height: '10%' }}>
+                <Button
+                    label="SALVAR"
+                    icon="save"
+                    onPress={save}
+                    style={{ width: '48%', borderColor: '#26ff00'  }}
+                />
+                <Button
+                    label="DELETAR"
+                    icon="trash"
+                    onPress={deleteItem}
+                    style={{ width: '48%', borderColor: '#f00000'  }}
+                />
             </View>
+
+            <Modal visible={modal.show} title={modal.title} onRequestClose={() => setModal({ show: false })} icon="exclamation">
+                <ListTopcs itens={modal.list}/>
+            </Modal>
         </App>
     );
 }

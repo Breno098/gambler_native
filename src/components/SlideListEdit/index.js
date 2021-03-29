@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Animated, TouchableOpacity, Dimensions, Image, Text, View } from 'react-native';
+import { Animated, TouchableOpacity, Dimensions, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function SlideListEdit({ animated, direction, routeName, routeParams, body, height  }) {
+export default function SlideListEdit({ direction, routeName, routeParams, body, height  }) {
   const navigation = useNavigation();
+
+  const [item] = useState(new Animated.Value(0))
 
   const move = () => {
     let toValue = direction === 'right' ? Dimensions.get('screen').height / 2 :-(Dimensions.get('screen').height / 2);
-    Animated.timing(animated, {toValue, duration: 350}).start()
+    Animated.timing(item, {toValue, duration: 350}).start()
     setTimeout(() => navigation.navigate(routeName, routeParams ?? {}), 370);
-    setTimeout(() => Animated.timing(animated, {toValue: 0, duration: 500}).start(), 400)
+    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500}).start(), 400)
   }
 
   return (
@@ -22,7 +24,7 @@ export default function SlideListEdit({ animated, direction, routeName, routePar
             justifyContent: 'space-between',
             borderRadius: 100,
             height: height ? height : 80,
-            transform: [{translateX: animated}]
+            transform: [{translateX: item}]
         }}>
             <View style={{ 
                 width: '90%', 
