@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Routes from './src/routes';
 import AppProvider from './src/providers/app';
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs();
 
 export default function App() {
   return (

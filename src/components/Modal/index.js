@@ -17,6 +17,7 @@ export default function Modal({ children, animationType, style, visible, title, 
                     borderWidth: 1,
                     borderTopColor: '#00fff7',
                     backgroundColor: '#fff',
+                    alignItems: 'center',
                     width: '101%',
                     height: 500,
                     padding: 3,
@@ -27,7 +28,7 @@ export default function Modal({ children, animationType, style, visible, title, 
                         ? 
                         <View style={styles.title}>
                             <View style={{ width: '85%' }}>
-                                <Text style={{ color:  title.color ? title.color : '"00fff7"', fontSize: 25 }}>
+                                <Text style={{ color:  title.color ? title.color : "#00fff7", fontSize: 25 }}>
                                     { title.text ? title.text : title  }
                                 </Text>
                             </View>
@@ -38,7 +39,7 @@ export default function Modal({ children, animationType, style, visible, title, 
                                     <Icon 
                                         name={icon.name ? icon.name : icon ? icon : null}
                                         size={icon.size ? icon.size : 15}  
-                                        color={icon.color ? icon.color : "00fff7"} 
+                                        color={icon.color ? icon.color : "#00fff7"} 
                                     />
                                 </View>
                                 :
@@ -46,7 +47,7 @@ export default function Modal({ children, animationType, style, visible, title, 
                                 ?
                                 <ActivityIndicator 
                                     size={icon && icon.size ? icon.size : 15} 
-                                    color={icon && icon.color ? icon.color :  "00fff7"}
+                                    color={icon && icon.color ? icon.color :  "#00fff7"}
                                 />
                                 :
                                 null
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
 
     title :{
         width: '100%', 
+        height: '10%',
         padding: 5, 
         marginBottom: 5,
         flexDirection: 'row',

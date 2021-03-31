@@ -10,9 +10,9 @@ export default function SlideButtonRoute({ direction, routeName, icon, label, wi
 
   const move = () => {
     let toValue = direction === 'right' ? Dimensions.get('screen').height / 2 : -(Dimensions.get('screen').height / 2);
-    Animated.timing(item, {toValue, duration: 350}).start()
+    Animated.timing(item, {toValue, duration: 350, useNativeDriver: true}).start()
     setTimeout(() => navigation.navigate(routeName, routeParams ?? {}), 370);
-    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500}).start(), 400)
+    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500, useNativeDriver: true}).start(), 400)
   }
 
   const images = () => {
@@ -38,7 +38,7 @@ export default function SlideButtonRoute({ direction, routeName, icon, label, wi
         }}>
             <TouchableOpacity onPress={move} style={{ 
                 backgroundColor: '#f2f1f1',
-                width: width ? width : '85%', 
+                width: width ? width : '50%', 
                 height: '100%',
                 alignItems: 'center',
                 justifyContent: 'space-between',

@@ -1,94 +1,131 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text } from 'react-native';
+import { View, Text, Picker  } from 'react-native';
 import api from '../../../services/api';
 
 import Button from '../../../components/Button';
 import Input from '../../../components/Input';
 import App from '../../../components/App';
-import FloatCard from '../../../components/FloatCard';
 import Modal from '../../../components/Modal';
 import ListTopcs from '../../../components/ListTopcs'
+import InfoCard from '../../../components/InfoCard'
 
 export default function Form({ route }) {
     const navigation = useNavigation();
     
-    const [country, setCountry] = useState(route.params?.country);
-    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        loadCountries();
+        loadTeams();
+    }, []);
 
+    const loadCountries = async () => {
+        setLoading(true);
+        await api.get('country').then(response => {
+            setCountries(response.data.countries);
+            setLoading(false);
+            setCountry(route.params?.player.country_id);
+        })
+    }
+
+    const loadTeams = async () => {
+        setLoading(true);
+        await api.get('team').then(response => {
+            setTeams(response.data.teams);
+            setLoading(false);
+            setTeam(route.params?.player.team_id);
+        })
+    }
+    
+
+    const [player, setPlayer] = useState(route.params?.player.name);
+    const [playerInputError, setPlayerInputError] = useState(false);
+
+    const [country, setCountry] = useState(null);
+    const [countries, setCountries] = useState([]);
+
+    const [team, setTeam] = useState(null);
+    const [teams, setTeams] = useState([]);
+
+    const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState({ show: false });
 
-    const [icon, setIcon] = useState({name: country ? 'edit' : 'save'});
+    const [icon, setIcon] = useState(player ? 'edit' : 'save');
 
     const save = async () => {
+        if((!player) || (player && !player.name)){
+            setPlayerInputError(true);
+            return;
+        }
+
         setLoading(true);
-        if(country && country.id){
-            await api.put(`country/${country.id}`, country)
-                .then(()  => success())
-                .catch(() => error('Erro ao atualizar', 'Erro no servidor. Aguarde e tente novamente em 1 minuto.'))
+        if(player?.id){
+            await api.put(`player/${player.id}`, player).then(() => success()).catch(() => error('Erro ao atualizar', 'Erro no servidor. Aguarde e tente novamente em 1 minuto.'))
         } else {
-            await api.post(`country`, country)
-                .then(() => success())
-                .catch(() => error('Erro ao salvar', 'Erro no servidor. Aguarde e tente novamente em 1 minuto.'))
+            await api.post(`player`, player).then(() => success()).catch(() => error('Erro ao salvar', 'Erro no servidor. Aguarde e tente novamente em 1 minuto.'))
         }
     }
 
     const deleteItem = async () => {
         setLoading(true);
-        if(country && country.id){
-            await api.delete(`country/${country.id}`)
+        if(player && player.id){
+            await api.delete(`player/${player.id}`)
             .then(() => success())
             .catch(() => error('Erro ao deletar', [{
                 title: 'Possiveis erros:',
-                itens: [ 
-                    ' - País vinculado a outros registros',
-                    ' - Erro no servidor.'
-                ]
+                list: [ ' - País vinculado a outros registros', ' - Erro no servidor. Aguarde e tente novamente em 1 minuto.' ]
             }]))
         } else {
-            navigation.navigate('Country')
+            navigation.navigate('Player')
         }
     }
 
     const success = () => {
-        setIcon({ name: 'check', color: '#00f018' });
+        setIcon('check');
         setLoading(false);
-        setTimeout(() => navigation.navigate('Country'), 1000)
+        setTimeout(() => navigation.navigate('Player'), 1000)
     }
 
-    const error = (title, message) => {
-        setIcon({ name: 'check', color: '#00f018' });
-        setModal({ show: true, title, message });
+    const error = (title, list) => {
+        setIcon('exclamation');
+        setModal({ show: true, title, list });
         setLoading(false);
     }
 
     return (
-        <App style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <FloatCard type="elevation" top={40} left={15} color='#00fff7' size="small" label={country?.id ?? 'NR'}/>
-            <FloatCard type="elevation" top={40} left={345} color='#fff' size="small" icon={icon} loading={loading} elevation={0}/>
-           
-            <Modal 
-                visible={modal.show} 
-                title="Erro" 
-                onRequestClose={() => setModal({ show: false })}
-                icon="exclamation"
-            >
-                <ListTopcs itens={modal.message}/>
-            </Modal>
+        <App style={{ justifyContent: 'space-around', alignItems: 'center' }}>
+            <InfoCard style={{ width: '20%', flexDirection: 'row', height: '10%' }} loading={loading} icon={icon}>
+                <Text> {player?.id ?? 'NR'}  </Text>
+            </InfoCard>
 
-            <View style={{ flexDirection: 'row', width: '90%', marginTop: 60  }}>
+            <View style={{ width: '90%', height: '70%', margin: 60 }}>
                 <Input
                     label="Nome"
-                    value={country ? country.name : null}
-                    onChangeText={(name) => setCountry({ name, id: country ? country.id : null })}
+                    value={player}
+                    onChangeText={(name) => { setPlayer(name); setPlayerInputError(false); }}
                     loading={loading}
+                    error={playerInputError}
+                    errorText="Campo obrigatório"
                 />
+
+                <Picker selectedValue={country} onValueChange={(itemValue, itemIndex) => setCountry(itemValue)}>
+                    <Picker.Item label="Selecione o país" value={null}/>
+                    { countries ? countries.map(country => (<Picker.Item label={country.name} value={country.id} />)) : null }
+                </Picker>
+
+                <Picker selectedValue={team} onValueChange={(itemValue, itemIndex) => setTeam(itemValue)}>
+                    <Picker.Item label="Selecione o time" value={null}/>
+                    { teams ? teams.map(teams => (<Picker.Item label={teams.name} value={teams.id} />)) : null }
+                </Picker>
             </View>
 
-            <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between' }}>
-                <Button color='#00f018' label="SALVAR" icon="save" width='49.7%'  onPress={save} />
-                <Button color='#f00000' label="DELETAR" icon="save" width='49.7%'  onPress={deleteItem}/>
+            <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between',  height: '10%' }}>
+                <Button label="SALVAR" icon="save" onPress={save} style={{ width: '48%', borderColor: '#26ff00' }}/>
+                <Button label="DELETAR" icon="trash" onPress={deleteItem} style={{ width: '48%', borderColor: '#f00000' }}/>
             </View>
+
+            <Modal visible={modal.show} title={modal.title} onRequestClose={() => setModal({ show: false })} icon="exclamation">
+                <ListTopcs itens={modal.list}/>
+            </Modal>
         </App>
     );
 }

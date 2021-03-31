@@ -3,20 +3,20 @@ import { useNavigation } from '@react-navigation/native';
 import { Animated, TouchableOpacity, Dimensions, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function SlideListEdit({ direction, routeName, routeParams, body, height  }) {
+export default function SlideListEdit({ direction, routeName, routeParams, body, height, key }) {
   const navigation = useNavigation();
 
   const [item] = useState(new Animated.Value(0))
 
   const move = () => {
     let toValue = direction === 'right' ? Dimensions.get('screen').height / 2 :-(Dimensions.get('screen').height / 2);
-    Animated.timing(item, {toValue, duration: 350}).start()
+    Animated.timing(item, {toValue, duration: 350, useNativeDriver: true}).start()
     setTimeout(() => navigation.navigate(routeName, routeParams ?? {}), 370);
-    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500}).start(), 400)
+    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500, useNativeDriver: true}).start(), 400)
   }
 
   return (
-        <Animated.View style={{
+        <Animated.View key={key} style={{
             width: '100%',
             marginBottom: 5,
             flexDirection: direction === 'right' ? 'row-reverse' : 'row',
@@ -42,7 +42,7 @@ export default function SlideListEdit({ direction, routeName, routeParams, body,
             }}>
                 <View style={{ width: '5%', height: '100%', flexDirection: direction === 'right' ? 'row' : 'row-reverse' }}>
                     <View style={{ backgroundColor: 'rgba(0, 255, 247, 0.4)', width: 25, height: 25, borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text> { body.id ? body.id : '--' } </Text>
+                        <Text> { body?.id ?? '--' } </Text>
                     </View>
                 </View>
 

@@ -118,6 +118,7 @@ export default function Input({ value, onChangeText, icon, loading, placeholder,
 const styles = StyleSheet.create({
     main: {
         width: '100%',
+        marginBottom: 10,
     },
     label: {
         fontSize: 15,
@@ -128,7 +129,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         width: '100%',
         padding: 10,
-        marginTop: 5,
     },
     input: {
         fontSize: 20,

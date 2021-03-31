@@ -6,6 +6,7 @@ import Country from '../pages/App/Country';
 import FormCountry from '../pages/App/Country/form'
 
 import Player from '../pages/App/Player';
+import FormPlayer from '../pages/App/Player/form';
 
 const AppStack = createStackNavigator();
 
@@ -46,7 +47,15 @@ export default function AppRoutes(){
                 component={Player}
                 options={{ 
                     headerShown: false,
-                    gestureDirection: "horizontal-inverted"
+                    gestureDirection: "horizontal"
+                }}
+            />
+            <AppStack.Screen 
+                name="FormPlayer" 
+                component={FormPlayer}
+                options={{ 
+                    headerShown: false,
+                    gestureDirection: "horizontal"
                 }}
             />
             

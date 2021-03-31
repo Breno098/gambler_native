@@ -40,7 +40,7 @@ export default function Button({ disabled, label, labelColor, labelSize, onPress
                     name={icon}
                     size={15}  
                     color={iconColor ? iconColor : "#000"} 
-                    style={{ marginLeft: 8 }}
+                    style={{ marginLeft: label ? 8 : 0 }}
                 />
                 :
                 loading
@@ -48,7 +48,7 @@ export default function Button({ disabled, label, labelColor, labelSize, onPress
                 <ActivityIndicator 
                     size={18} 
                     color={icon && iconColor ? iconColor : "#000"}
-                    style={{ marginLeft: 8 }}
+                    style={{ marginLeft: label ? 8 : 0 }}
                 />
                 :
                 null

@@ -10,9 +10,9 @@ export default function SlideButtonBack({ direction, width, height }) {
 
   const move = () => {
     let toValue = direction === 'right' ? Dimensions.get('screen').height / 2 : -(Dimensions.get('screen').height / 2);
-    Animated.timing(item, {toValue, duration: 350}).start()
+    Animated.timing(item, {toValue, duration: 350, useNativeDriver: true}).start()
     setTimeout(() => navigation.goBack(), 370);
-    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500}).start(), 400)
+    setTimeout(() => Animated.timing(item, {toValue: 0, duration: 500, useNativeDriver: true}).start(), 400)
   }
 
   return (
@@ -40,7 +40,7 @@ export default function SlideButtonBack({ direction, width, height }) {
                 borderBottomLeftRadius: direction === 'right' ? 100 : 0
             }}>
                 <View style={{ height: '100%', width: '40%', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon name='arrow-left' size={20} color='#000' style={{ marginLeft: 5 }}/>
+                    <Icon name={direction === 'right' ? 'arrow-right' : 'arrow-left'} size={20} color='#000' style={{ marginLeft: 5 }}/>
                 </View>
                 <View style={{ height: '100%', width: '60%', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 25, padding: 10 }}> Voltar </Text>
