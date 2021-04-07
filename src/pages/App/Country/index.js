@@ -5,11 +5,15 @@ import api from '../../../services/api';
 import App from '../../../components/App';
 import SlideButtonRoute from '../../../components/SlideButtonRoute';
 import SlideListEdit from '../../../components/SlideListEdit';
-import SlideButtonBack from '../../../components/SlideButtonBack';
+import TablePaginator from '../../../components/TablePaginator';
 import Button from '../../../components/Button';
 import Modal from '../../../components/Modal';
 import Input from '../../../components/Input';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+import Table from '../../../components/Table';
+import TableRow from '../../../components/TableRow';
+import TableCell from '../../../components/TableCell';
 
 export default function Country() {
     const [_countries, _setCountries] = useState([]);
@@ -23,16 +27,20 @@ export default function Country() {
 
     const [filterParams, setfilterParams] = useState('');
 
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
+
+
     useEffect(() => {
         loadList();
     }, []);
 
     const loadList = async () => {
+        setCountries([]);
         setLoading(true);
         setErrorLoading(false);
         await api.get('country').then(response => {
             setCountries(response.data.countries);
-            _setCountries(response.data.countries)
             setLoading(false);
         }).catch(() => {
             setLoading(false);
@@ -40,76 +48,44 @@ export default function Country() {
         })
     }
 
-    const filter = (search) => {
-        if(!search || search === ''){
-            setCountries(_countries); 
-            return;
-        }
-
-        let list = _countries.filter(country => country.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-        setCountries(list); 
-    }
-    
-    const order = async (field) => {
-        let type = (orderParams.type === 'asc' || !orderParams.type) && orderParams.field === field ? 'desc' : 'asc';
-        setOrderParams({ field, type });
-        setCountries([]);
-        _setCountries( 
-            type === 'asc' ? _countries.sort((a, b) => (a[field] > b[field]) ? 1 : -1) : _countries.sort((a, b) => (a[field] < b[field]) ? 1 : -1) 
-        ); 
-        setCountries( 
-            type === 'asc' ? countries.sort((a, b) => (a[field] > b[field]) ? 1 : -1) : countries.sort((a, b) => (a[field] < b[field]) ? 1 : -1) 
-        ); 
-    }
-
-    const iconOrder = (field) => {
-        return (orderParams.type === 'desc' || !orderParams.type) && orderParams.field === field ? 'sort-up'  : orderParams.field === field ? 'sort-down' : 'minus'
-    }
-
-    const colorButtonOrder = (field) => {
-        return orderParams.field === field ? "#00fff7" : null
-    }
-
     return (
-        <App style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <App style={{  }}>
+            <Table 
+                style={{ height: 400 }} 
+                loading={loading}
+                title="Países"
+                actions={[{
+                    icon: 'filter', 
+                    onPress: () => alert('ellipsis-v')
+                }]}
+            >
+                <TableRow>
+                    <TableCell text={'ID'} type={'title'}/>
+                    <TableCell text={'Nome'} type={'title'}/>
+                </TableRow>
+                { countries
+                    .slice(
+                        (page - 1) * perPage, 
+                        (page - 1) * perPage + perPage
+                    )
+                    .map(country => (
+                    <TableRow key={country.id}>
+                        <TableCell text={country.id} />
+                        <TableCell text={country.name} />
+                    </TableRow>
+                ))}
+                
+            </Table>
+            <TablePaginator
+                rows={countries.length}
+                numberOfPages={countries.length / perPage}
+                atualPage={page}
+                next={() => page < (countries.length / perPage) ? setPage(page + 1) : null }
+                previous={() => page > 1 ? setPage(page - 1) : null }
+            />
+           
 
-            <View style={{ width: '100%', height: '10%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <SlideButtonBack direction="left"/>
-            </View>
-            
-            <View style={{ width: '100%', height: '65%', justifyContent: 'center'}}>
-                {
-                    loading 
-                    ?
-                    <ActivityIndicator size="large" color="#00fff7"/>
-                    :
-                    errorLoading
-                    ?
-                    <View style={{ width: '100%', height: '65%', justifyContent: 'center', alignItems: 'center'}}>
-                        <Icon name="exclamation" size={35} color="#f00000" style={{ margin: 'auto' }} />
-                        <Text style={{ fontSize: 15, color: '#f00000', marginTop: 15 }}> Error ao carregar registros </Text>
-                    </View>
-                    :
-                        <FlatList
-                            data={countries}
-                            renderItem={({item, index}) => (
-                                <SlideListEdit
-                                    key={index}
-                                    direction="right"
-                                    routeName="FormCountry"
-                                    routeParams={{ country: item }}
-                                    body={{
-                                        id: item.id,
-                                        title:item.name,
-                                        itens: [], 
-                                    }}
-                                    height={50}
-                                />
-                            )}
-                        />
-                }
-            </View>
-
+            {/*             
             <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between',  height: '10%' }}>
                 <Button
                     label="Filtrar"
@@ -165,7 +141,7 @@ export default function Country() {
                         loading={loading}
                     />
                 </View>
-            </Modal>
+            </Modal> */}
         </App>
   );
 }

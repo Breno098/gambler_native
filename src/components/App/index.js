@@ -9,8 +9,7 @@ export default function App({ children, style }) {
                 flex: 1,
                 backgroundColor: "#fff",
                 width: '100%',
-                paddingTop: 50,
-                paddingBottom: 10,
+                paddingTop: 33,
                 ...style
             }}
         >
