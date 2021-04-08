@@ -20,7 +20,7 @@ export default function Table({ style, title, children, actions, loading }) {
     return (
         <View style={{ 
             width: '100%', 
-            backgroundColor: 'rgba(250, 250, 250, 0.3)', 
+            backgroundColor: '#ffffff', 
             justifyContent: 'flex-start',
             alignItems: 'center',
             ...style

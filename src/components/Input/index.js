@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, ActivityIndicator, Animated, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TextInput, ActivityIndicator, Animated, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Input({ value, onChangeText, icon, loading, placeholder, label, color, disabled, error, errorText }) {
+export default function Input({ icon, loading, label, color, disabled, error, errorText, ...props }) {
 
     const [errorAnimated] = useState(new Animated.Value(0));
     const inputEl = useRef(null);
@@ -15,78 +15,58 @@ export default function Input({ value, onChangeText, icon, loading, placeholder,
     }, [error])
 
     return (
-        <TouchableOpacity style={styles.main} onPress={() => inputEl.current.focus() }>
-            {
-                label
-                ?
-                <Text 
-                    onPress={() => inputEl.current.focus() }
-                    style={{ 
-                    color: label && label.color ? label.color : "#000",
-                    ...styles.label
-                    }}
-                >
-                    { label && typeof label === 'string' ? label : label && label.text ? label.text : '' }
-                </Text>
-                :
-                null
-            }
-         
-
+        <TouchableOpacity style={{ width: '100%', height: 60, paddingTop: 9 }} onPress={() => inputEl.current.focus() }>
             <View   
                 style={{
-                        borderBottomColor: disabled ? '#eee' : error ? 'rgba(255, 0, 0, 0.4)' : color ? color : "#00fff7",
-                        flexDirection: icon && icon.local === 'pre-pend' ? 'row-reverse' : 'row',
-                        ...styles.inputArea
+                        borderColor: disabled ? '#eee' : error ? 'rgba(255, 0, 0, 1)' : color ? color : "#f76a05",
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        borderWidth : 1,
+                        borderRadius: 10,
+                        backgroundColor: '#fff',
+                        width: '100%',
+                        padding: 10,
                     }}  
             >
                 <TextInput 
+                    {...props}
+                    inlineImageLeft="user"
                     ref={inputEl}
                     style={{
                         color: "#000", 
-                        ...styles.input
+                        fontSize: 20,
+                        width: '90%',
                     }}  
-                    value={value ? value : null}
-                    onChangeText={onChangeText ? onChangeText : ()=>{}}
-                    placeholder={placeholder ? placeholder : '' }
-                    placeholderTextColor='rgba(255, 255, 255, 0.5)'
+                    placeholderTextColor='rgba(0, 0, 0, 0.2)'
                 />
                 {
-                    icon && (typeof icon === 'string' || icon.name) && !loading
-                    ?
-                    <Icon 
-                        name={
-                            icon.name ? icon.name : icon ? icon : null
-                        }
-                        size={
-                            icon.size ? icon.size : 15
-                        }  
-                        color={
-                            disabled ? '#eee' : icon.color ? icon.color : "#00fff7"
-                        } 
-                        style={{ 
-                            marginLeft: 8, 
-                            marginRight: 8 
-                        }}
-                    />
-                    :
-                    loading
-                    ?
-                    <ActivityIndicator 
-                        size={15} 
-                        color={
-                            disabled ? '#eee' : icon && icon.color ? icon.color : color ? color : "#00fff7"
-                        }
-                        style={{ 
-                            marginLeft: 8,
-                            marginRight: 8 
-                        }}
-                    />
-                    :
-                    null
-
+                    error ? 
+                        <Icon name='exclamation' size={15} color={"#f76a05"} style={{ marginLeft: 8, marginRight: 8 }}/> 
+                    :icon && !loading ?
+                        <Icon name={icon} size={15} color={"#f76a05"} style={{ marginLeft: 8, marginRight: 8 }}/>
+                    : loading ?
+                        <ActivityIndicator size={15} color={"#f76a05"} style={{ marginLeft: 8, marginRight: 8 }}/>
+                    : null
                 }
             </View>
+            {
+                label ?
+                    <Text 
+                        onPress={() => inputEl.current.focus() }
+                        style={{ 
+                            color: "#000", 
+                            fontSize: 15,
+                            position: 'absolute',
+                            marginLeft: 10,
+                            backgroundColor: '#fff',
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                        }}
+                    >
+                        {  label ?? '' }
+                    </Text>
+                : null
+            }
 
             {
                 error
@@ -114,24 +94,3 @@ export default function Input({ value, onChangeText, icon, loading, placeholder,
         </TouchableOpacity>
     );
 }
-
-const styles = StyleSheet.create({
-    main: {
-        width: '100%',
-        marginBottom: 10,
-    },
-    label: {
-        fontSize: 15,
-        width: '100%',
-    },
-    inputArea: {
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        width: '100%',
-        padding: 10,
-    },
-    input: {
-        fontSize: 20,
-        width: '90%',
-    },
-})

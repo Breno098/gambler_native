@@ -1,65 +1,51 @@
 import React, { useContext, useState } from 'react';
-import { Modal as ModelReact, StyleSheet, Text, ActivityIndicator, View} from 'react-native';
+import { Modal as ModelReact, StyleSheet, Text, ActivityIndicator, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function Modal({ children, animationType, style, visible, title, onRequestClose, icon, loading}) {
     return (
         <View style={styles.centeredView}>
-          <ModelReact
-            animationType={animationType ? animationType : 'slide'}
-            transparent={true}
-            visible={visible}
-            onRequestClose={onRequestClose ? () => onRequestClose() : () => {}}
-          >
-            <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', ...styles.centeredView }}>
-                <View style={{ 
-                    borderRadius:      15,
-                    borderWidth: 1,
-                    borderTopColor: '#00fff7',
-                    backgroundColor: '#fff',
-                    alignItems: 'center',
-                    width: '101%',
-                    height: 500,
-                    padding: 3,
-                    ...style
-                }}>
+            <ModelReact
+                animationType={animationType ? animationType : 'slide'}
+                transparent={true}
+                visible={visible}
+                onRequestClose={onRequestClose}
+                statusBarTranslucent={true}
+            >
+                <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', ...styles.centeredView }}>
+                    <TouchableOpacity style={{ flex: 1, opacity: 0, width: '100%' }} onPress={onRequestClose}/>
+                    <View style={styles.title}>
                     {
-                        title && (typeof title === 'string' || title.text)  
-                        ? 
-                        <View style={styles.title}>
+                        title ? 
                             <View style={{ width: '85%' }}>
-                                <Text style={{ color:  title.color ? title.color : "#00fff7", fontSize: 25 }}>
-                                    { title.text ? title.text : title  }
+                                <Text style={{ color: "#f76a05", fontSize: 25 }}>
+                                    { title }
                                 </Text>
-                            </View>
-                            { 
-                                icon && (typeof icon === 'string' || icon.name) && !loading
-                                ?
-                                <View style={{ width: '5%' }}>
-                                    <Icon 
-                                        name={icon.name ? icon.name : icon ? icon : null}
-                                        size={icon.size ? icon.size : 15}  
-                                        color={icon.color ? icon.color : "#00fff7"} 
-                                    />
-                                </View>
-                                :
-                                loading
-                                ?
-                                <ActivityIndicator 
-                                    size={icon && icon.size ? icon.size : 15} 
-                                    color={icon && icon.color ? icon.color :  "#00fff7"}
-                                />
-                                :
-                                null
-                            }
-                        </View>
-                        :
-                        null
+                            </View> 
+                        : null
                     }
-                    { children }
+                    { 
+                        icon && !loading ?
+                            <View style={{ width: '5%' }}>
+                                <Icon name={icon} size={15} color={"#f76a05"}/>
+                            </View>
+                        : loading ?
+                            <ActivityIndicator size={15} color={"#f76a05"}/>
+                        : null
+                    }
+                    </View>
+                    <View style={{ 
+                        backgroundColor: '#fff',
+                        alignItems: 'center',
+                        width: '101%',
+                        height: 450,
+                        padding: 15,
+                        ...style
+                    }}>
+                        { children }
+                    </View>
                 </View>
-            </View>
-          </ModelReact>
+            </ModelReact>
         </View>
       );
 }
@@ -67,8 +53,8 @@ export default function Modal({ children, animationType, style, visible, title, 
 const styles = StyleSheet.create({
     centeredView: {
         flexDirection: 'column',
-        justifyContent: "flex-end",
-        alignItems: "flex-end",
+        justifyContent: "center",
+        alignItems: "center",
         width: '100%',
         height: '100%',
         position: 'absolute',
@@ -76,13 +62,16 @@ const styles = StyleSheet.create({
     },
 
     title :{
-        width: '100%', 
-        height: '10%',
-        padding: 5, 
-        marginBottom: 5,
+        width: '101%', 
+        padding: 10, 
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderTopColor: '#f76a05',
+        borderBottomWidth: 0.5, 
+        borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: '#fff'
     }
 });
   

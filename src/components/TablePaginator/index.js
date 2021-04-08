@@ -9,7 +9,8 @@ export default function TablePaginator({ next, previous, rows, numberOfPages, at
             width: '100%', 
             flexDirection: 'row',
             justifyContent: rows ? 'space-between' : 'flex-end',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: '#ffffff'
         }}>
             { rows ? <Text style={{ fontSize: 12, marginLeft: 10 }}> Total: {rows} </Text> : null }
             { numberOfPages ? <Text style={{ fontSize: 12, marginLeft: 10 }}> Paginas: {atualPage}-{Math.ceil(numberOfPages)} </Text> : null }

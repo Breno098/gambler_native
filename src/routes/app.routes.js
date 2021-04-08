@@ -1,47 +1,72 @@
 import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator, CardStyleInterpolators  } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import CustomDrawer from '../components/CustomDrawer';
-
-
-
 import Registrations from '../pages/App/Registrations';
+
 import Country from '../pages/App/Country';
+import FilterCountry from '../pages/App/Country/filter';
 import FormCountry from '../pages/App/Country/form'
 
 import Player from '../pages/App/Player';
 import FormPlayer from '../pages/App/Player/form';
+import { Text, View } from 'react-native';
 
-const AppDrawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
 export default function AppRoutes(){
     return(
-        <AppDrawer.Navigator
-            drawerContent={ (props) => <CustomDrawer {...props}/> }
-            drawerStyle={{
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                width: '50%',
-            }}
-            drawerContentOptions={{
-                activeTintColor: '#fff',
-                activeBackgroundColor: '#f76a05',
-                inactiveTintColor: '#000',
-                inactiveBackgroundColor: 'rgba(0, 0, 0, 0)',
-                itemStyle: {
-                    marginVertical: 2,
-                    width: '100%',
-                }
+        <Stack.Navigator
+            screenOptions={{
+                gestureEnabled: false,
+                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                headerStyle: {
+                    backgroundColor: 'rgb(247, 106, 5)',
+                },
+                headerTintColor: '#fff',
+                gestureDirection: "horizontal",
             }}
         >
-        {/* <AppDrawer.Screen name="Home" component={Home} options={{ 
-            title: 'Inicio', 
-            drawerIcon: ({tintColor}) => <Icon name="home" size={20} color={tintColor} /> 
-        }}/> */}
-        <AppDrawer.Screen name="Registrations" component={Registrations} options={{ 
-            title: 'Registros', 
-            drawerIcon: ({focused, size}) => <Icon name="edit" size={20} color={focused ? '#fff' : '#000'} />,
-        }}/>
-    </AppDrawer.Navigator>
+            <Stack.Screen 
+                name="Registrations" 
+                component={Registrations}
+                options={{
+                    headerStyle: {
+                        backgroundColor: 'rgb(247, 106, 5)',
+                    },
+                    headerTintColor: '#fff',
+                    // headerTitle: props => ( 
+                    //     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    //         <Icon name="home" size={20} color="#fff"/>
+                    //         <Text> Gamblers </Text>
+                    //     </View>
+                    // )
+                }}
+            />
+
+            <Stack.Screen 
+                name="Country" 
+                component={Country} 
+                options={{ 
+                    title: 'Países'
+                }}
+            />
+            <Stack.Screen 
+                name="FilterCountry" 
+                component={FilterCountry} 
+                options={{ 
+                    title: "",
+                    gestureDirection: "horizontal",
+                }}
+            />
+            <Stack.Screen 
+                name="FormCountry" 
+                component={FormCountry} 
+                options={{ 
+                    title: "",
+                    gestureDirection: "horizontal",
+                }}
+            />
+        </Stack.Navigator>
     );
 }
