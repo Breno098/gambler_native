@@ -9,8 +9,8 @@ import FilterCountry from '../pages/App/Country/filter';
 import FormCountry from '../pages/App/Country/form'
 
 import Player from '../pages/App/Player';
-import FormPlayer from '../pages/App/Player/form';
-import { Text, View } from 'react-native';
+import FilterPlayer from '../pages/App/Player/filter';
+import FormPlayer from '../pages/App/Player/form'
 
 const Stack = createStackNavigator();
 
@@ -31,10 +31,6 @@ export default function AppRoutes(){
                 name="Registrations" 
                 component={Registrations}
                 options={{
-                    headerStyle: {
-                        backgroundColor: 'rgb(247, 106, 5)',
-                    },
-                    headerTintColor: '#fff',
                     // headerTitle: props => ( 
                     //     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     //         <Icon name="home" size={20} color="#fff"/>
@@ -44,29 +40,13 @@ export default function AppRoutes(){
                 }}
             />
 
-            <Stack.Screen 
-                name="Country" 
-                component={Country} 
-                options={{ 
-                    title: 'Países'
-                }}
-            />
-            <Stack.Screen 
-                name="FilterCountry" 
-                component={FilterCountry} 
-                options={{ 
-                    title: "",
-                    gestureDirection: "horizontal",
-                }}
-            />
-            <Stack.Screen 
-                name="FormCountry" 
-                component={FormCountry} 
-                options={{ 
-                    title: "",
-                    gestureDirection: "horizontal",
-                }}
-            />
+            <Stack.Screen name="Country" component={Country} options={{ title: 'Países' }}/>
+            <Stack.Screen name="FilterCountry" component={FilterCountry} options={{ title: "" }}/>
+            <Stack.Screen name="FormCountry" component={FormCountry} options={{ itle: "" }}/>
+
+            <Stack.Screen name="Player" component={Player} options={{ title: 'Jogadores' }}/>
+            <Stack.Screen name="FilterPlayer" component={FilterPlayer} options={{ title: "" }}/>
+            <Stack.Screen name="FormPlayer" component={FormPlayer} options={{ itle: "" }}/>
         </Stack.Navigator>
     );
 }

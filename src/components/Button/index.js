@@ -2,29 +2,38 @@ import React from 'react';
 import { Text, TouchableOpacity, ActivityIndicator  } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Button({ disabled, label, labelColor, labelSize, onPress, icon, iconColor, loading, color, style }) {
+export default function Button({ disabled, label, labelColor, labelSize, onPress, icon, iconColor, loading, color, style, mode }) {
 
+    const backgroundColorStyleBilder = () => {
+        return mode === 'outlined' || mode === 'text' ? 'rgba(0, 0, 0, 0)' : color ? color : "#f76a05";
+    }
+
+    const borderColorStyleBilder = () => {
+        return mode === 'text' ? 'rgba(0, 0, 0, 0)' : mode === 'outlined' && color ? color : color ? color : "#f76a05";
+    }
+    
     return (
         <TouchableOpacity 
             onPress={
                 onPress && !disabled && !loading ? onPress : ()=>{}
             } 
             style={{
-                backgroundColor: color ? color : "#f76a05",
+                backgroundColor: backgroundColorStyleBilder(),
+                borderColor: borderColorStyleBilder(),
+                borderWidth: mode === 'outlined' ? 1 : 0,
                 borderRadius: 10,
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexDirection: 'row',
                 height: 50,
-                marginTop: 5,
                 width: '100%',
                 ...style,
         }}>
             {
                 label ? 
                     <Text style={{ 
-                        color: labelColor ? labelColor : "#000", 
-                        fontSize: labelSize ? labelSize : 15, 
+                        color: labelColor ?? "#000", 
+                        fontSize: labelSize ?? 15, 
                         fontWeight: 'bold'
                     }}>
                         { label ?? '' }
@@ -36,7 +45,7 @@ export default function Button({ disabled, label, labelColor, labelSize, onPress
                     <Icon 
                         name={icon}
                         size={15}  
-                        color={iconColor ? iconColor : "#000"} 
+                        color={iconColor ?? "#000"} 
                         style={{ marginLeft: label ? 8 : 0 }}
                     />
                 : loading ?

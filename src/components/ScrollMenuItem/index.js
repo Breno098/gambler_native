@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function ScrollMenuItem({ icon, ...props }) {
+export default function ScrollMenuItem({ icon, label, ...props }) {
     return (
       <TouchableOpacity 
         {...props}
@@ -13,10 +13,15 @@ export default function ScrollMenuItem({ icon, ...props }) {
           marginLeft: 10,
           borderRadius: 7,
           elevation: 5, 
-          padding: 10
+          padding: 10,
+          justifyContent: 'space-between'
         }}
       >
-          <Icon name={icon} size={30} color={'#fff'} />
+          <Icon name={icon} size={30} color={'rgba(255, 255, 255, 0.9)'} />
+
+          <Text style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.9)', width: '100%', textAlign: 'right' }}>
+            { label ?? '' }
+          </Text>
       </TouchableOpacity>
     );
 }

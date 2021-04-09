@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function CardTitle({ icon, title, children }) {
+export default function CardTitle({ icon, title, children, iconColor }) {
     return (
       <View 
         style={{ 
@@ -19,16 +19,17 @@ export default function CardTitle({ icon, title, children }) {
         >
           <Text
             style={{
-              fontSize: 20,
+              fontSize: 23,
               width: '98%',
               padding: 5,
+              fontWeight: 'bold'
             }}
           > 
             { title } 
           </Text>
           {
             icon ?
-                <Icon name={icon} size={15} color={"#f76a05"} style={{ marginLeft: 8, marginRight: 8 }}/>
+                <Icon name={icon} size={15} color={iconColor ?? "rgba(0, 0, 0, 0.5)"} style={{ marginLeft: 8, marginRight: 8 }}/>
             : null
           }
         </View>

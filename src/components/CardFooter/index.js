@@ -6,10 +6,10 @@ export default function CardFooter({ icon, title, style, children }) {
     return (
       <View 
         style={{ 
-          ...style,
           width: '100%', 
           padding: 10,
-          flexDirection: 'row'
+          flexDirection: 'row',
+          ...style,
         }}
       >
         { children }

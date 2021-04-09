@@ -13,8 +13,8 @@ export default function Card({ icon, children, style }) {
       }}>
         <View style={{ 
           ...style,
-          width: '95%', 
-          height: '98%', 
+          width: '96%', 
+          height: '99%', 
           backgroundColor: 'rgb(255, 255, 255)', 
           borderRadius: 4,
           elevation: 5, 

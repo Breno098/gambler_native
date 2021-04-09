@@ -7,7 +7,7 @@ export default function CardBody({ icon, children }) {
       <View 
         style={{ 
           width: '100%', 
-          padding: 10,
+          padding: 13,
           flex: 1
         }}
       >

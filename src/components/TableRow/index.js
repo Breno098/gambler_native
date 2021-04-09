@@ -7,7 +7,7 @@ export default function TableRow({ style, children }) {
         <View 
             style={{ 
                 width: '98%', 
-                height: 40, 
+                height: 50, 
                 borderBottomWidth: 0.5, 
                 borderBottomColor: 'rgba(0, 0, 0, 0.1)',
                 flexDirection: 'row',

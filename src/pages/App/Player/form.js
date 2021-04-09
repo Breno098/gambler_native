@@ -1,131 +1,187 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, Picker  } from 'react-native';
+import { Keyboard , Text } from 'react-native';
 import api from '../../../services/api';
 
-import Button from '../../../components/Button';
 import Input from '../../../components/Input';
 import App from '../../../components/App';
-import Modal from '../../../components/Modal';
-import ListTopcs from '../../../components/ListTopcs'
-import InfoCard from '../../../components/InfoCard'
+import Button from '../../../components/Button';
+import BreadCrumb from '../../../components/BreadCrumb';
+import Card from '../../../components/Card';
+import CardTitle from '../../../components/CardTitle';
+import CardBody from '../../../components/CardBody';
+import CardFooter from '../../../components/CardFooter';
+import Dialog from '../../../components/Dialog';
 
-export default function Form({ route }) {
-    const navigation = useNavigation();
+import Select from '../../../components/Select';
+import SelectOption from '../../../components/SelectOption';
+
+export default function Player({ route }) {
     
+    const navigation = useNavigation();
+
+    const [loading, setLoading] = useState(false);
+    const [playerNameInputError, setPlayerNameInputError] = useState(false);
+
+    const [playerId, setPlayerId] = useState(route?.params ? route?.params.player.id : null);
+    const [playerName, setPlayerName] = useState(route?.params ? route?.params.player.name : '');
+
+    const [countries, setCountries] = useState([]);
+    const [countryId, setCountryId] = useState(route?.params ? route?.params.player.country.id.toString() : null);
+
+    const [dialog, setDialog] = useState(false);
+
     useEffect(() => {
         loadCountries();
-        loadTeams();
-    }, []);
+    }, [])
 
     const loadCountries = async () => {
+        setCountries([]);
         setLoading(true);
+
         await api.get('country').then(response => {
             setCountries(response.data.countries);
             setLoading(false);
-            setCountry(route.params?.player.country_id);
-        })
-    }
-
-    const loadTeams = async () => {
-        setLoading(true);
-        await api.get('team').then(response => {
-            setTeams(response.data.teams);
+        }).catch((error) => {
+            console.log(error.response.data)
             setLoading(false);
-            setTeam(route.params?.player.team_id);
         })
     }
-    
 
-    const [player, setPlayer] = useState(route.params?.player.name);
-    const [playerInputError, setPlayerInputError] = useState(false);
-
-    const [country, setCountry] = useState(null);
-    const [countries, setCountries] = useState([]);
-
-    const [team, setTeam] = useState(null);
-    const [teams, setTeams] = useState([]);
-
-    const [loading, setLoading] = useState(false);
-    const [modal, setModal] = useState({ show: false });
-
-    const [icon, setIcon] = useState(player ? 'edit' : 'save');
 
     const save = async () => {
-        if((!player) || (player && !player.name)){
-            setPlayerInputError(true);
+        if(!playerName){
+            setPlayerNameInputError(true);
             return;
         }
 
+        Keyboard.dismiss();
         setLoading(true);
-        if(player?.id){
-            await api.put(`player/${player.id}`, player).then(() => success()).catch(() => error('Erro ao atualizar', 'Erro no servidor. Aguarde e tente novamente em 1 minuto.'))
+
+        let player = {
+            id: playerId,
+            name: playerName
+        }
+
+        if(playerId){
+            await api.put(`player/${playerId}`, player)
+                .then(()  => { 
+                    navigation.navigate('Player', { refresh: new Date  })
+                })
         } else {
-            await api.post(`player`, player).then(() => success()).catch(() => error('Erro ao salvar', 'Erro no servidor. Aguarde e tente novamente em 1 minuto.'))
+            await api.post(`player`, player)
+                .then(() =>  {
+                    navigation.navigate('Player', { refresh: new Date  })
+                })
         }
     }
 
     const deleteItem = async () => {
         setLoading(true);
-        if(player && player.id){
-            await api.delete(`player/${player.id}`)
-            .then(() => success())
-            .catch(() => error('Erro ao deletar', [{
-                title: 'Possiveis erros:',
-                list: [ ' - País vinculado a outros registros', ' - Erro no servidor. Aguarde e tente novamente em 1 minuto.' ]
-            }]))
-        } else {
-            navigation.navigate('Player')
-        }
-    }
-
-    const success = () => {
-        setIcon('check');
-        setLoading(false);
-        setTimeout(() => navigation.navigate('Player'), 1000)
-    }
-
-    const error = (title, list) => {
-        setIcon('exclamation');
-        setModal({ show: true, title, list });
-        setLoading(false);
+        await api.delete(`player/${playerId}`)
+        .then(() => {
+            navigation.navigate('Player', { refresh: new Date  })
+        })
     }
 
     return (
-        <App style={{ justifyContent: 'space-around', alignItems: 'center' }}>
-            <InfoCard style={{ width: '20%', flexDirection: 'row', height: '10%' }} loading={loading} icon={icon}>
-                <Text> {player?.id ?? 'NR'}  </Text>
-            </InfoCard>
+        <App style={{ }}>
+            <BreadCrumb
+                itens={[{
+                    label: 'Cadastros',
+                    route: 'Registrations'
+                }, {
+                    label: 'Jogadores',
+                    route: 'Player'
+                }, {
+                    label: playerId ? 'Alterar' : 'Cadastrar',
+                }]}
+            />
 
-            <View style={{ width: '90%', height: '70%', margin: 60 }}>
-                <Input
-                    label="Nome"
-                    value={player}
-                    onChangeText={(name) => { setPlayer(name); setPlayerInputError(false); }}
-                    loading={loading}
-                    error={playerInputError}
-                    errorText="Campo obrigatório"
+            <Card style={{ height: '94%' }} >
+                <CardTitle 
+                    title={playerId ? 'Alterar' : 'Cadastrar'}
+                    icon={playerId ? 'edit' : 'plus'}
                 />
 
-                <Picker selectedValue={country} onValueChange={(itemValue, itemIndex) => setCountry(itemValue)}>
-                    <Picker.Item label="Selecione o país" value={null}/>
-                    { countries ? countries.map(country => (<Picker.Item label={country.name} value={country.id} />)) : null }
-                </Picker>
+                <CardBody>
+                    <Input
+                        label="Nome"
+                        value={playerName}
+                        onChangeText={(text) => { 
+                            setPlayerName(text);
+                            setPlayerNameInputError(false);
+                        }}
+                        error={playerNameInputError}
+                        errorText="Campo obrigatório"
+                        loading={loading}
+                    />
 
-                <Picker selectedValue={team} onValueChange={(itemValue, itemIndex) => setTeam(itemValue)}>
-                    <Picker.Item label="Selecione o time" value={null}/>
-                    { teams ? teams.map(teams => (<Picker.Item label={teams.name} value={teams.id} />)) : null }
-                </Picker>
-            </View>
+                    <Input
+                        label="countryId"
+                        value={countryId}
+                        loading={loading}
+                    />
 
-            <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between',  height: '10%' }}>
-                <Button label="SALVAR" icon="save" onPress={save} style={{ width: '48%', borderColor: '#26ff00' }}/>
-                <Button label="DELETAR" icon="trash" onPress={deleteItem} style={{ width: '48%', borderColor: '#f00000' }}/>
-            </View>
+                    <Select>
+                        <SelectOption value={null} label="Selecione"/>
+                        {
+                            countries.map(country => <SelectOption value={country.id} label={country.name}/> )
+                        }
+                    </Select>
+                </CardBody>
 
-            <Modal visible={modal.show} title={modal.title} onRequestClose={() => setModal({ show: false })} icon="exclamation">
-                <ListTopcs itens={modal.list}/>
-            </Modal>
+                <CardFooter style={{ justifyContent: 'space-between' }}>
+                    <Button
+                        label="Salvar"
+                        color="rgba(0, 255, 0, 0.5)"
+                        icon="save"
+                        onPress={save}
+                        style={{ width: playerId ? '69%' : '100%' }}
+                        loading={loading}
+                    />
+                    {
+                        playerId ? 
+                            <Button
+                                label="Deletar"
+                                color="rgba(255, 0, 0, 0.5)"
+                                icon="trash"
+                                onPress={() => setDialog(true)}
+                                style={{ width: '29%' }}
+                                loading={loading}
+                            /> 
+                        : null
+                    }
+                </CardFooter>
+            </Card>
+
+            <Dialog visible={dialog} onRequestClose={() => setDialog(false)}>
+                <Card style={{ width: '90%', height: 200 }}>
+                    <CardTitle title={'Confirmar'}/>
+
+                    <CardBody>
+                        <Text style={{ fontSize: 15 }}>
+                            Excluir {playerName} ?
+                        </Text>
+                    </CardBody>
+
+                    <CardFooter style={{ justifyContent: 'flex-end' }}>
+                        <Button
+                            color="rgba(255, 0, 0, 0.5)"
+                            icon="times"
+                            onPress={() => setDialog(false)}
+                            style={{ width: '20%', marginRight: 5 }}
+                        />
+                        <Button
+                            color="rgba(0, 255, 0, 0.5)"
+                            icon="check"
+                            onPress={deleteItem}
+                            style={{ width: '30%' }}
+                            loading={loading}
+                        />
+                    </CardFooter>
+                </Card>
+            </Dialog>
         </App>
     );
 }

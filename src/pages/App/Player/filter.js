@@ -26,8 +26,8 @@ export default function Filter({ route }) {
                     label: 'Cadastros',
                     route: 'Registrations'
                 }, {
-                    label: 'Países',
-                    route: 'Country'
+                    label: 'Jogadores',
+                    route: 'Player'
                 }, {
                     label: 'Filtros',
                 }]}
@@ -59,7 +59,7 @@ export default function Filter({ route }) {
                         label={"Limpar"}
                         mode={"text"}
                         onPress={() => { 
-                            navigation.navigate('Country', {
+                            navigation.navigate('Player', {
                                 filters: { name: '' }, 
                                 orders: { name: null }
                             })
@@ -70,7 +70,7 @@ export default function Filter({ route }) {
                         label={"Filtrar"}
                         icon={"filter"}
                         onPress={() => { 
-                            navigation.navigate('Country', {
+                            navigation.navigate('Player', {
                                 filters: { name: filterName }, 
                                 orders: { name: orderName ? true : null }
                             })

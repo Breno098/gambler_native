@@ -4,6 +4,7 @@ import api from '../../../services/api';
 
 import App from '../../../components/App';
 import Button from '../../../components/Button';
+import BreadCrumb from '../../../components/BreadCrumb';
 import Table from '../../../components/Table';
 import TableRow from '../../../components/TableRow';
 import TableCell from '../../../components/TableCell';
@@ -22,13 +23,14 @@ export default function Country({ route }) {
     const [errorLoading, setErrorLoading] = useState(false);
 
     const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(14);
+    const [perPage, setPerPage] = useState(10);
 
     useEffect(() => {
         loadList();
     }, [route?.params]);
 
     const loadList = async () => {
+        setPage(1);
         setCountries([]);
         setLoading(true);
         setErrorLoading(false);
@@ -50,11 +52,22 @@ export default function Country({ route }) {
 
     return (
         <App style={{  }}>
-            <Card style={{ height: '100%' }} >
+            <BreadCrumb
+                itens={[{
+                    label: 'Cadastros',
+                    route: 'Registrations'
+                }, {
+                    label: 'Países',
+                }]}
+            />
+
+            <Card style={{ height: '94%' }} >
                 <CardBody>
                     <Table 
-                        style={{ height: 640 }} 
+                        style={{ height: 600 }} 
                         loading={loading}
+                        error={errorLoading}
+                        refresh={loadList}
                         title="Países"
                         actions={[{
                             icon: 'filter', 
@@ -67,6 +80,7 @@ export default function Country({ route }) {
                         <TableRow>
                             <TableCell text={'ID'} type={'title'}/>
                             <TableCell text={'Nome'} type={'title'}/>
+                            <TableCell text={''} type={'title'}/>
                         </TableRow>
                         { countries
                             .slice(
@@ -77,6 +91,17 @@ export default function Country({ route }) {
                             <TableRow key={country.id}>
                                 <TableCell text={country.id} />
                                 <TableCell text={country.name} />
+                                <TableCell>
+                                    <Button
+                                        style={{ height: 35, marginBottom: 18 }}
+                                        label="Editar"
+                                        color="rgba(0, 255, 0, 0.5)"
+                                        icon="edit"
+                                        onPress={() => {
+                                            navigation.navigate('FormCountry', { country })
+                                        }}
+                                    /> 
+                                </TableCell>
                             </TableRow>
                         ))}
                         
@@ -92,6 +117,7 @@ export default function Country({ route }) {
                 <CardFooter style={{ justifyContent: 'space-between' }}>
                     <Button
                         label="Adicionar"
+                        color="rgba(0, 255, 0, 0.5)"
                         icon="plus"
                         onPress={() => {
                             navigation.navigate('FormCountry')

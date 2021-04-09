@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text } from 'react-native';
+import { Keyboard , Text } from 'react-native';
 import api from '../../../services/api';
 
 import Input from '../../../components/Input';
-import Modal from '../../../components/Modal';
-import ListTopcs from '../../../components/ListTopcs'
-import SlideButtonBack from '../../../components/SlideButtonBack';
-import InfoCard from '../../../components/InfoCard'
-
 import App from '../../../components/App';
 import Button from '../../../components/Button';
-import Table from '../../../components/Table';
-import TableRow from '../../../components/TableRow';
-import TableCell from '../../../components/TableCell';
-import TablePaginator from '../../../components/TablePaginator';
+import BreadCrumb from '../../../components/BreadCrumb';
 import Card from '../../../components/Card';
+import CardTitle from '../../../components/CardTitle';
 import CardBody from '../../../components/CardBody';
 import CardFooter from '../../../components/CardFooter';
+import Dialog from '../../../components/Dialog';
 
 export default function Form({ route }) {
     const navigation = useNavigation();
@@ -25,8 +19,10 @@ export default function Form({ route }) {
     const [loading, setLoading] = useState(false);
     const [countryInputError, setCountryInputError] = useState(false);
 
-    const [countryId, setCountryId] = useState(null);
-    const [countryName, setCountryName] = useState('');
+    const [countryId, setCountryId] = useState(route?.params ? route?.params.country.id : null);
+    const [countryName, setCountryName] = useState(route?.params ? route?.params.country.name : '');
+
+    const [dialog, setDialog] = useState(false);
 
     const save = async () => {
         if(!countryName){
@@ -34,8 +30,8 @@ export default function Form({ route }) {
             return;
         }
 
+        Keyboard.dismiss();
         setLoading(true);
-        alert('salvando...');
 
         let country = {
             id: countryId,
@@ -45,36 +41,44 @@ export default function Form({ route }) {
         if(countryId){
             await api.put(`country/${countryId}`, country)
                 .then(()  => { 
-                    alert('atualizado com Sucesso');
-                    navigation.navigate('Country', {
-                        refresh: new Date 
-                    })
+                    navigation.navigate('Country', { refresh: new Date  })
                 })
         } else {
             await api.post(`country`, country)
                 .then(() =>  {
-                    alert('Salvo com Sucesso');
-                    navigation.navigate('Country', {
-                        refresh: new Date 
-                    })
+                    navigation.navigate('Country', { refresh: new Date  })
                 })
         }
     }
 
     const deleteItem = async () => {
         setLoading(true);
-        if(country && country.id){
-            await api.delete(`country/${country.id}`)
-            .then(() => alert('ok'))
-            
-        } else {
-            navigation.navigate('Country')
-        }
+        await api.delete(`country/${countryId}`)
+        .then(() => {
+            navigation.navigate('Country', { refresh: new Date  })
+        })
     }
 
     return (
         <App style={{ }}>
-            <Card style={{ height: '100%' }} >
+            <BreadCrumb
+                itens={[{
+                    label: 'Cadastros',
+                    route: 'Registrations'
+                }, {
+                    label: 'Países',
+                    route: 'Country'
+                }, {
+                    label: countryId ? 'Alterar' : 'Cadastrar',
+                }]}
+            />
+
+            <Card style={{ height: '94%' }} >
+                <CardTitle 
+                    title={countryId ? 'Alterar' : 'Cadastrar'}
+                    icon={countryId ? 'edit' : 'plus'}
+                />
+
                 <CardBody>
                     <Input
                         label="Nome"
@@ -92,14 +96,54 @@ export default function Form({ route }) {
                 <CardFooter style={{ justifyContent: 'space-between' }}>
                     <Button
                         label="Salvar"
-                        color="#0dff05"
+                        color="rgba(0, 255, 0, 0.5)"
                         icon="save"
                         onPress={save}
-                        style={{ width: '49%' }}
+                        style={{ width: countryId ? '69%' : '100%' }}
                         loading={loading}
                     />
+                    {
+                        countryId ? 
+                            <Button
+                                label="Deletar"
+                                color="rgba(255, 0, 0, 0.5)"
+                                icon="trash"
+                                onPress={() => setDialog(true)}
+                                style={{ width: '29%' }}
+                                loading={loading}
+                            /> 
+                        : null
+                    }
                 </CardFooter>
             </Card>
+
+            <Dialog visible={dialog} onRequestClose={() => setDialog(false)}>
+                <Card style={{ width: '90%', height: 200 }}>
+                    <CardTitle title={'Confirmar'}/>
+
+                    <CardBody>
+                        <Text style={{ fontSize: 15 }}>
+                            Excluir {countryName} ?
+                        </Text>
+                    </CardBody>
+
+                    <CardFooter style={{ justifyContent: 'flex-end' }}>
+                        <Button
+                            color="rgba(255, 0, 0, 0.5)"
+                            icon="times"
+                            onPress={() => setDialog(false)}
+                            style={{ width: '20%', marginRight: 5 }}
+                        />
+                        <Button
+                            color="rgba(0, 255, 0, 0.5)"
+                            icon="check"
+                            onPress={deleteItem}
+                            style={{ width: '30%' }}
+                            loading={loading}
+                        />
+                    </CardFooter>
+                </Card>
+            </Dialog>
         </App>
     );
 }

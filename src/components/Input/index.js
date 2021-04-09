@@ -9,8 +9,8 @@ export default function Input({ icon, loading, label, color, disabled, error, er
 
     useEffect(() => {
         if(error === true){
-            Animated.timing(errorAnimated, {toValue: 30, duration: 350}).start()
-            setTimeout(() => Animated.timing(errorAnimated, {toValue: 0, duration: 500}).start(), 400)
+            Animated.timing(errorAnimated, {toValue: 30, duration: 350, useNativeDriver: true}).start()
+            setTimeout(() => Animated.timing(errorAnimated, {toValue: 0, duration: 500, useNativeDriver: true}).start(), 400)
         }
     }, [error])
 
