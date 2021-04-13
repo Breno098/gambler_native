@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Keyboard , Text } from 'react-native';
+import { Keyboard , ScrollView, Text } from 'react-native';
 import api from '../../../services/api';
 
 import Input from '../../../components/Input';
@@ -12,35 +12,46 @@ import CardTitle from '../../../components/CardTitle';
 import CardBody from '../../../components/CardBody';
 import CardFooter from '../../../components/CardFooter';
 import Dialog from '../../../components/Dialog';
-
 import Select from '../../../components/Select';
-import SelectOption from '../../../components/SelectOption';
+import GroupButton from '../../../components/GroupButton';
 
-export default function Player({ route }) {
+export default function Form({ route }) {
     
     const navigation = useNavigation();
 
     const [loading, setLoading] = useState(false);
     const [playerNameInputError, setPlayerNameInputError] = useState(false);
+    const [countrySelectError, setCountrySelectError] = useState(false);
+    const [teamSelectError, setTeamSelectError] = useState(false);
+    const [positionError, setPositionError] = useState(false);
 
-    const [playerId, setPlayerId] = useState(route?.params ? route?.params.player.id : null);
+    const [playerId] = useState(route?.params ? route?.params.player.id : null);
     const [playerName, setPlayerName] = useState(route?.params ? route?.params.player.name : '');
+    const [playerPosition, setPlayerPosition] = useState(route?.params ? route?.params.player.position : '');
 
     const [countries, setCountries] = useState([]);
     const [countryId, setCountryId] = useState(route?.params ? route?.params.player.country.id.toString() : null);
+
+    const [teams, setTeams] = useState([]);
+    const [teamId, setTeamId] = useState(route?.params ? route?.params.player.team.id.toString() : null);
 
     const [dialog, setDialog] = useState(false);
 
     useEffect(() => {
         loadCountries();
+        loadTeams();
     }, [])
 
     const loadCountries = async () => {
         setCountries([]);
         setLoading(true);
-
         await api.get('country').then(response => {
-            setCountries(response.data.countries);
+            response.data.countries.forEach(country => {
+                setCountries(oldArray => [...oldArray, {
+                    label: country.name,
+                    value: country.id,
+                }]);
+            })
             setLoading(false);
         }).catch((error) => {
             console.log(error.response.data)
@@ -48,10 +59,45 @@ export default function Player({ route }) {
         })
     }
 
+    const loadTeams = async () => {
+        setTeams([]);
+        setLoading(true);
+        await api.get('team').then(response => {
+            response.data.teams.forEach(team => {
+                setTeams(oldArray => [...oldArray, {
+                    label: team.name,
+                    value: team.id,
+                }]);
+            })
+            setLoading(false);
+        }).catch((error) => {
+            console.log(error.response.data)
+            setLoading(false);
+        })
+    }
+
+    const removeErrorAndSelectCountry = (index, value) => {
+        setCountryId(index);
+        setCountrySelectError(false)
+    }
+
+    const removeErrorAndSelectTeam = (index, value) => {
+        setTeamId(index);
+        setTeamSelectError(false)
+    }
+
+    const removeErrorAndSelectPosition = (value) => {
+        setPlayerPosition(value);
+        setPositionError(false)
+    }
 
     const save = async () => {
-        if(!playerName){
-            setPlayerNameInputError(true);
+        setPlayerNameInputError(!playerName);
+        setCountrySelectError(!countryId);
+        setTeamSelectError(!teamId)
+        setPositionError(!playerPosition)
+
+        if(!playerName || !countryId || !teamId || !playerPosition){
             return;
         }
 
@@ -60,32 +106,26 @@ export default function Player({ route }) {
 
         let player = {
             id: playerId,
-            name: playerName
+            name: playerName,
+            country_id: countryId,
+            team_id: teamId,
+            position: playerPosition
         }
 
         if(playerId){
-            await api.put(`player/${playerId}`, player)
-                .then(()  => { 
-                    navigation.navigate('Player', { refresh: new Date  })
-                })
+            await api.put(`player/${playerId}`, player).then(()  => navigation.navigate('Player', { refresh: new Date }) ) 
         } else {
-            await api.post(`player`, player)
-                .then(() =>  {
-                    navigation.navigate('Player', { refresh: new Date  })
-                })
+            await api.post(`player`, player).then(() => navigation.navigate('Player', { refresh: new Date  }) )
         }
     }
 
     const deleteItem = async () => {
         setLoading(true);
-        await api.delete(`player/${playerId}`)
-        .then(() => {
-            navigation.navigate('Player', { refresh: new Date  })
-        })
+        await api.delete(`player/${playerId}`).then(() => navigation.navigate('Player', { refresh: new Date  }) )
     }
 
     return (
-        <App style={{ }}>
+        <App style={{ justifyContent: 'space-between', alignItems: 'center' }} >
             <BreadCrumb
                 itens={[{
                     label: 'Cadastros',
@@ -98,7 +138,7 @@ export default function Player({ route }) {
                 }]}
             />
 
-            <Card style={{ height: '94%' }} >
+            <Card style={{ height: '97%' }} transparent>
                 <CardTitle 
                     title={playerId ? 'Alterar' : 'Cadastrar'}
                     icon={playerId ? 'edit' : 'plus'}
@@ -117,18 +157,65 @@ export default function Player({ route }) {
                         loading={loading}
                     />
 
-                    <Input
-                        label="countryId"
-                        value={countryId}
+                    <Select
+                        icon={'globe'}
+                        label="Países"
+                        itens={countries}
+                        indexValueInitial={countryId}
+                        onItemPress={(index, value) => removeErrorAndSelectCountry(index)}
+                        error={countrySelectError}
+                        errorText="Selecione um país"
                         loading={loading}
                     />
 
-                    <Select>
-                        <SelectOption value={null} label="Selecione"/>
-                        {
-                            countries.map(country => <SelectOption value={country.id} label={country.name}/> )
-                        }
-                    </Select>
+                    <Select
+                        icon={'users'}
+                        label="Times"
+                        itens={teams}
+                        indexValueInitial={teamId}
+                        onItemPress={(index, value) => removeErrorAndSelectTeam(index)}
+                        error={teamSelectError}
+                        errorText="Selecione um time"
+                        loading={loading}
+                    />
+
+                    <GroupButton
+                        label="Posição"
+                        icon={'street-view'}
+                        error={positionError}
+                        errorText="Selecione uma posição"
+                        itens={[{
+                            text: 'ATA', 
+                            color: 'rgba(255, 0, 0, 0.7)', 
+                            onPress: () => removeErrorAndSelectPosition('ATA'),
+                            active: playerPosition === 'ATA'
+                        }, {
+                            text: 'MEI', 
+                            color: 'rgba(0, 255, 0, 0.5)', 
+                            onPress: () => removeErrorAndSelectPosition('MEI'),
+                            active: playerPosition === 'MEI'
+                        }, {
+                            text: 'VOL', 
+                            color: 'rgba(0, 255, 0, 0.5)',
+                            onPress: () => removeErrorAndSelectPosition('VOL'),
+                            active: playerPosition === 'VOL'
+                        }, {
+                            text: 'ZAG', 
+                            color: '#03eeff', 
+                            onPress: () => removeErrorAndSelectPosition('ZAG'),
+                            active: playerPosition === 'ZAG'
+                        },  {
+                            text: 'LAT', 
+                            color: '#03eeff',
+                            onPress: () => removeErrorAndSelectPosition('LAT'),
+                            active: playerPosition === 'LAT' 
+                        }, {
+                            text: 'GOL', 
+                            color: '#ff9626', 
+                            onPress: () => removeErrorAndSelectPosition('GOL'),
+                            active: playerPosition === 'GOL'
+                        }]}
+                    />
                 </CardBody>
 
                 <CardFooter style={{ justifyContent: 'space-between' }}>
@@ -155,14 +242,12 @@ export default function Player({ route }) {
                 </CardFooter>
             </Card>
 
-            <Dialog visible={dialog} onRequestClose={() => setDialog(false)}>
+             <Dialog visible={dialog} onRequestClose={() => setDialog(false)}>
                 <Card style={{ width: '90%', height: 200 }}>
                     <CardTitle title={'Confirmar'}/>
 
                     <CardBody>
-                        <Text style={{ fontSize: 15 }}>
-                            Excluir {playerName} ?
-                        </Text>
+                        <Text style={{ fontSize: 15 }}> Excluir {playerName} ?</Text>
                     </CardBody>
 
                     <CardFooter style={{ justifyContent: 'flex-end' }}>

@@ -9,11 +9,11 @@ import Table from '../../../components/Table';
 import TableRow from '../../../components/TableRow';
 import TableCell from '../../../components/TableCell';
 import TablePaginator from '../../../components/TablePaginator';
-import Card from '../../../components/Card';
+import Chip from '../../../components/Chip';
 import CardBody from '../../../components/CardBody';
 import CardFooter from '../../../components/CardFooter';
 
-export default function Country({ route }) {
+export default function Player({ route }) {
 
     const navigation = useNavigation();
 
@@ -51,7 +51,7 @@ export default function Country({ route }) {
     }
 
     return (
-        <App style={{  }}>
+        <App style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <BreadCrumb
                 itens={[{
                     label: 'Cadastros',
@@ -61,73 +61,84 @@ export default function Country({ route }) {
                 }]}
             />
 
-            <Card style={{ height: '94%' }} >
-                <CardBody>
-                    <Table 
-                        style={{ height: 600 }} 
-                        loading={loading}
-                        error={errorLoading}
-                        refresh={loadList}
-                        title="Países"
-                        actions={[{
-                            icon: 'filter', 
-                            onPress: () => navigation.navigate('FilterPlayer', {
-                                filters: route.params.filters ?? '', 
-                                orders: route.params.orders ?? true
-                            })
-                        }]}
-                    >
-                        <TableRow>
-                            <TableCell text={'Nome'} type={'title'}/>
-                            <TableCell text={'Time'} type={'title'}/>
-                            <TableCell text={'País'} type={'title'}/>
-                            <TableCell text={''} type={'title'}/>
-                        </TableRow>
-                        { players
-                            .slice(
-                                (page - 1) * perPage, 
-                                (page - 1) * perPage + perPage
-                            )
-                            .map(player => (
-                            <TableRow key={player.id}>
-                                <TableCell text={player.name} />
-                                <TableCell text={player.team.name} />
-                                <TableCell text={player.country.name} />
-                                <TableCell>
-                                    <Button
-                                        style={{ height: 35, marginBottom: 18 }}
-                                        label="Editar"
-                                        color="rgba(0, 255, 0, 0.5)"
-                                        icon="edit"
-                                        onPress={() => {
-                                            navigation.navigate('FormPlayer', { player })
-                                        }}
-                                    /> 
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        
-                    </Table>
-                    <TablePaginator
-                        rows={players.length}
-                        numberOfPages={players.length / perPage}
-                        atualPage={page}
-                        next={() => page < (players.length / perPage) ? setPage(page + 1) : null }
-                        previous={() => page > 1 ? setPage(page - 1) : null }
-                    />
-                </CardBody>
-                <CardFooter style={{ justifyContent: 'space-between' }}>
-                    <Button
-                        label="Adicionar"
-                        color="rgba(0, 255, 0, 0.5)"
-                        icon="plus"
-                        onPress={() => {
-                            navigation.navigate('FormPlayer')
-                        }}
-                    />   
-                </CardFooter>
-            </Card>
-           
+            <Table 
+                style={{ height: 600 }} 
+                loading={loading}
+                error={errorLoading}
+                refresh={loadList}
+                title="Países"
+                actions={[{
+                    icon: 'filter', 
+                    onPress: () => navigation.navigate('FilterPlayer', {
+                        filters: route.params.filters ?? '', 
+                        orders: route.params.orders ?? true
+                    })
+                }]}
+            >
+                <TableRow>
+                    <TableCell text={'Nome'} type={'title'}/>
+                    <TableCell text={'Time'} type={'title'}/>
+                    <TableCell text={'País'} type={'title'}/>
+                    <TableCell text={'Posição'} type={'title'}/>
+                    <TableCell text={''} type={'title'}/>
+                </TableRow>
+                { players
+                    .slice(
+                        (page - 1) * perPage, 
+                        (page - 1) * perPage + perPage
+                    )
+                    .map(player => (
+                    <TableRow key={player.id}>
+                        <TableCell text={player.name} />
+                        <TableCell text={player.team.name} />
+                        <TableCell text={player.country.name} />
+                        <TableCell>
+                            <Chip 
+                                label={player.position}
+                                style={{ marginBottom: 18, width: '100%' }}
+                                color={
+                                    player.position === 'ATA' ? 'rgba(255, 0, 0, 0.7)' : 
+                                    player.position === 'MEI' ? 'rgba(0, 255, 0, 0.5)' : 
+                                    player.position === 'VOL' ? 'rgba(0, 255, 0, 0.5)' : 
+                                    player.position === 'ZAG' ? '#03eeff' :
+                                    player.position === 'GOL' ? 'rgba(128, 69, 27, 0.5)' : '#fff'
+                                }
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <Button
+                                style={{ height: 35, marginBottom: 18, width: 50 }}
+                                color="rgba(0, 255, 0, 0.5)"
+                                icon="edit"
+                                onPress={() => {
+                                    navigation.navigate('FormPlayer', { player })
+                                }}
+                            /> 
+                        </TableCell>
+                    </TableRow>
+                ))}
+                
+            </Table>
+            
+            <TablePaginator
+                rows={players.length}
+                numberOfPages={players.length / perPage}
+                atualPage={page}
+                next={() => page < (players.length / perPage) ? setPage(page + 1) : null }
+                previous={() => page > 1 ? setPage(page - 1) : null }
+            />
+
+            <Button
+                label="Adicionar"
+                color="rgba(0, 255, 0, 0.5)"
+                icon="plus"
+                onPress={() => {
+                    navigation.navigate('FormPlayer')
+                }}
+                style={{
+                    width: '95%'
+                }}
+            />   
         </App>
   );
 }

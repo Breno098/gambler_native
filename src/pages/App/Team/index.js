@@ -10,11 +10,11 @@ import TableRow from '../../../components/TableRow';
 import TableCell from '../../../components/TableCell';
 import TablePaginator from '../../../components/TablePaginator';
 
-export default function Country({ route }) {
+export default function Team({ route }) {
 
     const navigation = useNavigation();
 
-    const [countries, setCountries] = useState([]);
+    const [teams, setTeams] = useState([]);
     
     const [loading, setLoading] = useState(false);
     const [errorLoading, setErrorLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function Country({ route }) {
 
     const loadList = async () => {
         setPage(1);
-        setCountries([]);
+        setTeams([]);
         setLoading(true);
         setErrorLoading(false);
 
@@ -37,8 +37,8 @@ export default function Country({ route }) {
             orders: route?.params.orders
         }
 
-        await api.post('filter/country', bodyRequest).then(response => {
-            setCountries(response.data.countries);
+        await api.post('filter/team', bodyRequest).then(response => {
+            setTeams(response.data.teams);
             setLoading(false);
         }).catch((error) => {
             console.log(error.response.data)
@@ -54,7 +54,7 @@ export default function Country({ route }) {
                     label: 'Cadastros',
                     route: 'Registrations'
                 }, {
-                    label: 'Países',
+                    label: 'Times',
                 }]}
             />
 
@@ -63,10 +63,10 @@ export default function Country({ route }) {
                 loading={loading}
                 error={errorLoading}
                 refresh={loadList}
-                title="Países"
+                title="Times"
                 actions={[{
                     icon: 'filter', 
-                    onPress: () => navigation.navigate('FilterCountry', {
+                    onPress: () => navigation.navigate('FilterTeam', {
                         filters: route.params.filters ?? '', 
                         orders: route.params.orders ?? true
                     })
@@ -74,23 +74,25 @@ export default function Country({ route }) {
             >
                 <TableRow>
                     <TableCell text={'Nome'} type={'title'}/>
+                    <TableCell text={'País'} type={'title'}/>
                     <TableCell text={''} type={'title'}/>
                 </TableRow>
-                { countries
+                { teams
                     .slice(
                         (page - 1) * perPage, 
                         (page - 1) * perPage + perPage
                     )
-                    .map(country => (
-                    <TableRow key={country.id}>
-                        <TableCell text={country.name} />
+                    .map(team => (
+                    <TableRow key={team.id}>
+                        <TableCell text={team.name} />
+                        <TableCell text={team.country.name} />
                         <TableCell>
                             <Button
-                                style={{ height: 35, marginBottom: 18,  width: 50 }}
+                                style={{ height: 35, marginBottom: 18, width: 50 }}
                                 color="rgba(0, 255, 0, 0.5)"
                                 icon="edit"
                                 onPress={() => {
-                                    navigation.navigate('FormCountry', { country })
+                                    navigation.navigate('FormTeam', { team })
                                 }}
                             /> 
                         </TableCell>
@@ -98,21 +100,21 @@ export default function Country({ route }) {
                 ))}
                 
             </Table>
-
+            
             <TablePaginator
-                rows={countries.length}
-                numberOfPages={countries.length / perPage}
+                rows={teams.length}
+                numberOfPages={teams.length / perPage}
                 atualPage={page}
-                next={() => page < (countries.length / perPage) ? setPage(page + 1) : null }
+                next={() => page < (teams.length / perPage) ? setPage(page + 1) : null }
                 previous={() => page > 1 ? setPage(page - 1) : null }
             />
-                
+
             <Button
                 label="Adicionar"
                 color="rgba(0, 255, 0, 0.5)"
                 icon="plus"
                 onPress={() => {
-                    navigation.navigate('FormCountry')
+                    navigation.navigate('FormTeam')
                 }}
                 style={{
                     width: '95%'

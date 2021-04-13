@@ -1,11 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TextInput, ActivityIndicator, Animated, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, ActivityIndicator, Animated, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Input({ icon, loading, label, color, disabled, error, errorText, ...props }) {
+export default function GroupButton({ icon, loading, label, color, disabled, error, errorText, itens, ...props }) {
 
     const [errorAnimated] = useState(new Animated.Value(0));
-    const inputEl = useRef(null);
+
+    const setColorSelected = (active, color) => {
+        return active && color ? color : 
+               active ? '#f76a05' : 'rgb(255, 255, 255)';
+    }
 
     useEffect(() => {
         if(error === true){
@@ -15,7 +19,7 @@ export default function Input({ icon, loading, label, color, disabled, error, er
     }, [error])
 
     return (
-        <TouchableWithoutFeedback onPress={() => inputEl.current.focus() }>
+        <View>
             <View style={{ width: '100%', height: 60, paddingTop: 9, marginBottom: 23 }}>
                 <View   
                     style={{
@@ -26,20 +30,32 @@ export default function Input({ icon, loading, label, color, disabled, error, er
                             borderRadius: 10,
                             backgroundColor: '#fff',
                             width: '100%',
+                            height: 50,
+                            padding: 10
                         }}  
                 >
-                    <TextInput 
-                        {...props}
-                        inlineImageLeft="user"
-                        ref={inputEl}
-                        style={{
-                            color: "#000", 
-                            fontSize: 20,
-                            width: '90%',
-                            padding: 10,
-                        }}  
-                        placeholderTextColor='rgba(0, 0, 0, 0.2)'
-                    />
+                    {
+                        itens.map((button, index) => (
+                            <TouchableWithoutFeedback onPress={button.onPress}>
+                                <View style={{ 
+                                    flex: 1, 
+                                    backgroundColor: setColorSelected(button.active, button.color),
+                                    height: '100%',
+                                    borderColor: '#525252',
+                                    borderRadius: 8,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginLeft: 2,
+                                    marginRight: 2,
+                                }}>
+                                    <Text>
+                                        { button.text }
+                                    </Text>
+                    
+                                </View>
+                            </TouchableWithoutFeedback>
+                        ))
+                    }
                     {
                         error ? 
                             <Icon name='exclamation' size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/> 
@@ -53,7 +69,6 @@ export default function Input({ icon, loading, label, color, disabled, error, er
                 {
                     label ?
                         <Text 
-                            onPress={() => inputEl.current.focus() }
                             style={{ 
                                 color: "#000", 
                                 fontSize: 15,
@@ -83,6 +98,6 @@ export default function Input({ icon, loading, label, color, disabled, error, er
                     : null
                 }
             </View>
-        </TouchableWithoutFeedback>
+        </View>
     );
 }

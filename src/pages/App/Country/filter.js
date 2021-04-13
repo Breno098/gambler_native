@@ -29,10 +29,10 @@ export default function Filter({ route }) {
                     label: 'Países',
                     route: 'Country'
                 }, {
-                    label: 'Filtros',
+                    label: 'Filtrar e ordenar',
                 }]}
             />
-            <Card style={{ height: '94%' }}>
+            <Card style={{ height: '97%' }} transparent>
                 <CardTitle title={"Filtros"} icon={"filter"}/>
                 <CardBody>
                     <Input

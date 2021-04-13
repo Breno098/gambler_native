@@ -8,7 +8,7 @@ export default function SwitchLabel({ leftIcon, rightIcon, onValueChange, value,
  return (
     <View   
         style={{
-            borderColor: "#f76a05",
+            borderColor: "#525252",
             flexDirection: 'row',
             alignItems: 'center',
             borderWidth : 1,
@@ -16,7 +16,8 @@ export default function SwitchLabel({ leftIcon, rightIcon, onValueChange, value,
             backgroundColor: '#fff',
             width: '100%',
             paddingRight: 10,
-            paddingLeft: 10
+            paddingLeft: 10,
+            marginBottom: 23
         }}  
     >
         <Text

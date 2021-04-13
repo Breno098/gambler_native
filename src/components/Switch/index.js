@@ -13,7 +13,7 @@ export default function Switch({ leftIcon, rightIcon, onValueChange, value }) {
     }}>
         {
             leftIcon ? 
-                <Icon name={leftIcon} size={15} color={value ? 'rgba(0, 0, 0, 0.5)' : 'rgb(247, 106, 5)'}/>
+                <Icon name={leftIcon} size={15} color={value ? 'rgba(0, 0, 0, 0.5)' : 'rgb(255, 0, 0)'}/>
             : null
         }
         <SwitchReact
@@ -24,7 +24,7 @@ export default function Switch({ leftIcon, rightIcon, onValueChange, value }) {
         />
         {
             rightIcon ? 
-                <Icon name={rightIcon} size={15} color={value ? 'rgb(247, 106, 5)' : 'rgba(0, 0, 0, 0.5)'}/>
+                <Icon name={rightIcon} size={15} color={value ? '#09db37' : 'rgba(0, 0, 0, 0.5)'}/>
             : null
         }
     </View>

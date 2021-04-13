@@ -7,7 +7,7 @@ export default function CardTitle({ icon, title, children, iconColor }) {
       <View 
         style={{ 
           width: '95%', 
-          padding: 5,
+          padding: 8,
         }}
       >
         <View  

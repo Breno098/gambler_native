@@ -21,24 +21,22 @@ export default function Filter({ route }) {
     const [loading, setLoading] = useState(false);
 
     const [filterName, setFilterName] = useState(route?.params.filters.name);
-    const [filterTeam, setFilterTeam] = useState(route?.params.filters.team_id);
-    const [filterPosition, setFilterPosition] = useState(route?.params.filters.position);
+    const [filterCountry, setFilterCountry] = useState(route?.params.filters.country_id);
 
     const [orderName, setOrderName] = useState(route?.params.orders.name ?? false);
-    const [orderPosition, setOrderPosition] = useState(route?.params.orders.position ?? false);
 
-    const [teams, setTeams] = useState([]);
+    const [countries, setCountries] = useState([]);
 
     useEffect(() => {
         loadTeams();
     }, [])
 
     const loadTeams = async () => {
-        setTeams([]);
+        setCountries([]);
         setLoading(true);
-        await api.get('team').then(response => {
-            response.data.teams.forEach(team => {
-                setTeams(oldArray => [...oldArray, {
+        await api.get('country').then(response => {
+            response.data.countries.forEach(team => {
+                setCountries(oldArray => [...oldArray, {
                     label: team.name,
                     value: team.id,
                 }]);
@@ -57,8 +55,8 @@ export default function Filter({ route }) {
                     label: 'Cadastros',
                     route: 'Registrations'
                 }, {
-                    label: 'Jogadores',
-                    route: 'Player'
+                    label: 'Estádios',
+                    route: 'Stadium'
                 }, {
                     label: 'Filtrar e ordenar',
                 }]}
@@ -76,48 +74,13 @@ export default function Filter({ route }) {
 
                     <Select
                         icon={'users'}
-                        label="Time"
-                        itens={teams}
-                        indexValueInitial={filterTeam}
-                        onItemPress={(index, value) => setFilterTeam(index)}
+                        label="País"
+                        itens={countries}
+                        indexValueInitial={filterCountry}
+                        onItemPress={(index, value) => setFilterCountry(index)}
                         loading={loading}
                     />
 
-                    <GroupButton
-                        label="Posição"
-                        icon={'street-view'}
-                        itens={[{
-                            text: 'ATA', 
-                            color: 'rgba(255, 0, 0, 0.7)', 
-                            onPress: () => setFilterPosition('ATA'),
-                            active: filterPosition === 'ATA'
-                        }, {
-                            text: 'MEI', 
-                            color: 'rgba(0, 255, 0, 0.5)', 
-                            onPress: () => setFilterPosition('MEI'),
-                            active: filterPosition === 'MEI'
-                        }, {
-                            text: 'VOL', 
-                            color: 'rgba(0, 255, 0, 0.5)',
-                            onPress: () => setFilterPosition('VOL'),
-                            active: filterPosition === 'VOL'
-                        }, {
-                            text: 'ZAG', 
-                            color: '#03eeff', 
-                            onPress: () => setFilterPosition('ZAG'),
-                            active: filterPosition === 'ZAG'
-                        },  {
-                            text: 'LAT', 
-                            color: '#03eeff',
-                            onPress: () => setFilterPosition('LAT'),
-                            active: filterPosition === 'LAT' 
-                        }, {
-                            text: 'GOL', 
-                            color: '#ff9626', 
-                            onPress: () => setFilterPosition('GOL'),
-                            active: filterPosition === 'GOL'
-                        }]}
-                    />
                     </CardBody>
 
                     <CardTitle title={"Ordem"} icon={"sort"}/>
@@ -127,20 +90,7 @@ export default function Filter({ route }) {
                             leftIcon={"times"}
                             rightIcon={"check"}
                             value={orderName}
-                            onValueChange={() => { 
-                                setOrderName(!orderName)
-                                setOrderPosition(false)
-                            }}
-                        />
-                        <SwitchLabel 
-                            label={"Posição"}
-                            leftIcon={"times"}
-                            rightIcon={"check"}
-                            value={orderPosition}
-                            onValueChange={() => { 
-                                setOrderPosition(!orderPosition)
-                                setOrderName(false)
-                            }}
+                            onValueChange={() => setOrderName(!orderName) }
                         />
                     </CardBody>
                 </ScrollView>
@@ -151,15 +101,13 @@ export default function Filter({ route }) {
                         label={"Limpar"}
                         mode={"text"}
                         onPress={() => { 
-                            navigation.navigate('Player', {
+                            navigation.navigate('Stadium', {
                                 filters: { 
                                     name: '',
-                                    team_id : '',
-                                    position: ''
+                                    country_id : '',
                                 }, 
                                 orders: { 
                                     name: null,
-                                    position: null 
                                 }
                             })
                         }}
@@ -169,15 +117,13 @@ export default function Filter({ route }) {
                         label={"Filtrar"}
                         icon={"filter"}
                         onPress={() => { 
-                            navigation.navigate('Player', {
+                            navigation.navigate('Stadium', {
                                 filters: { 
                                     name: filterName,
-                                    team_id : filterTeam,
-                                    position: filterPosition
+                                    country_id : filterCountry,
                                 }, 
                                 orders: { 
                                     name: orderName ? true : null,
-                                    position: orderPosition ? true : null,
                                 }
                             })
                         }}

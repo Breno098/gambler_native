@@ -12,6 +12,14 @@ import Player from '../pages/App/Player';
 import FilterPlayer from '../pages/App/Player/filter';
 import FormPlayer from '../pages/App/Player/form'
 
+import Stadium from '../pages/App/Stadium';
+import FilterStadium from '../pages/App/Stadium/filter';
+import FormStadium from '../pages/App/Stadium/form'
+
+import Team from '../pages/App/Team';
+import FilterTeam from '../pages/App/Team/filter';
+import FormTeam from '../pages/App/Team/form'
+
 const Stack = createStackNavigator();
 
 export default function AppRoutes(){
@@ -40,13 +48,21 @@ export default function AppRoutes(){
                 }}
             />
 
-            <Stack.Screen name="Country" component={Country} options={{ title: 'Países' }}/>
+            <Stack.Screen name="Country" component={Country} options={{ title: '' }}/>
             <Stack.Screen name="FilterCountry" component={FilterCountry} options={{ title: "" }}/>
-            <Stack.Screen name="FormCountry" component={FormCountry} options={{ itle: "" }}/>
+            <Stack.Screen name="FormCountry" component={FormCountry} options={{ title: "" }}/>
 
-            <Stack.Screen name="Player" component={Player} options={{ title: 'Jogadores' }}/>
+            <Stack.Screen name="Player" component={Player} options={{ title: '' }}/>
             <Stack.Screen name="FilterPlayer" component={FilterPlayer} options={{ title: "" }}/>
-            <Stack.Screen name="FormPlayer" component={FormPlayer} options={{ itle: "" }}/>
+            <Stack.Screen name="FormPlayer" component={FormPlayer} options={{ title: "" }}/>
+
+            <Stack.Screen name="Stadium" component={Stadium} options={{ title: '' }}/>
+            <Stack.Screen name="FilterStadium" component={FilterStadium} options={{ title: "" }}/>
+            <Stack.Screen name="FormStadium" component={FormStadium} options={{ title: "" }}/>
+
+            <Stack.Screen name="Team" component={Team} options={{ title: '' }}/>
+            <Stack.Screen name="FilterTeam" component={FilterTeam} options={{ title: "" }}/>
+            <Stack.Screen name="FormTeam" component={FormTeam} options={{ title: "" }}/>
         </Stack.Navigator>
     );
 }

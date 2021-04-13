@@ -40,10 +40,12 @@ export default function Registrations() {
           <ScrollMenuItem 
             icon="users"
             label="Time"
+            onPress={() => navigation.navigate('Team', { refresh: new Date })}
           />
           <ScrollMenuItem 
             icon="flag"
             label="Estádio"
+            onPress={() => navigation.navigate('Stadium', { refresh: new Date })}
           />
         </ScrollMenu>
       </App>
