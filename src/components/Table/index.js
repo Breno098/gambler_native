@@ -49,7 +49,7 @@ export default function Table({ style, title, children, actions, loading, error,
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                         <Icon name={"exclamation-circle"} size={30} color="rgba(255, 0, 0, 0.4)"/>
+                         <Icon name={"exclamation-circle"} size={30} color="rgba(255, 0, 0, 1)"/>
                     </View>
                 :
                     <ScrollView 

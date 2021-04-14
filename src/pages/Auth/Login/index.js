@@ -1,9 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
 import { AppContext } from '../../../providers/app'
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import App from '../../../components/App';
+import Button from '../../../components/Button';
+import Input from '../../../components/Input';
+
 export default function Login() {
+
+  const navigation = useNavigation();
 
   const { _login } = useContext(AppContext);
 
@@ -14,9 +21,30 @@ export default function Login() {
   const handleOpenEye = () => setOpenEye(!openEye);
 
   return (
-      <View style={styles.container}>
-        <Image style={styles.logo} source={require('../../../images/Logo-orange.png')}/>
+      <App style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Image style={styles.logo} source={require('../../../images/Logo.png')}/>
 
+        <Input
+            label={"Email"}
+            value={email}
+            onChangeText={(text) => setEmail(text) }
+            style={{ width: '95%' }}
+        />
+
+        <Input
+            label={"Senha"}
+            value={password}
+            onChangeText={(text) => setPassword(text) }
+            style={{ width: '95%' }}
+        />
+
+        <Button
+          style={{ marginBottom: 23, width: '95%' }}
+          label="Registrar"
+          mode={"text"}
+          onPress={() => navigation.navigate('SignUp')}
+        />
+{/* 
         <View style={styles.inputArea}>
           <Text style={styles.label}>
             Email
@@ -49,12 +77,15 @@ export default function Login() {
               style={{ marginBottom: 15, marginLeft: 10}}
             />
           </View>
-        </View>
+        </View> */}
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => _login(email, password)}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-      </View>
+        <Button
+          label="Login"
+          color="rgba(0, 255, 0, 0.5)"
+          style={{ width: '95%' }}
+          onPress={() => _login(email, password)}
+        />
+      </App>
   );
 }
 

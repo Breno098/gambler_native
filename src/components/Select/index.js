@@ -58,7 +58,7 @@ export default function Select({ icon, loading, label, color, disabled, error, e
                         <Icon name={dialog ? 'caret-up' : 'caret-down'} size={15} color={"rgba(0, 0, 0, 0.5)"} style={{ marginLeft: 8, marginRight: 8 }}/>
                         {
                             error ? 
-                                <Icon name='exclamation' size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/> 
+                                <Icon name='exclamation' size={15} color={"rgba(255, 0, 0, 1)"} style={{ marginLeft: 8, marginRight: 8 }}/> 
                             : icon && !loading ?
                                 <Icon name={icon} size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/>
                             : loading ?

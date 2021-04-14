@@ -14,41 +14,28 @@ import CardTitle from '../../../components/CardTitle';
 import CardBody from '../../../components/CardBody';
 import CardFooter from '../../../components/CardFooter';
 import Dialog from '../../../components/Dialog';
-import Select from '../../../components/Select';
-
 import ImageSelect from '../../../components/ImageSelect';
-import Switch from '../../../components/Switch';
-import List from '../../../components/List';
-import ListItem from '../../../components/ListItem';
 
 export default function Form({ route }) {
     
     const navigation = useNavigation();
 
     const [loading, setLoading] = useState(false);
-    const [teamNameInputError, setTeamNameInputError] = useState(false);
-    const [countrySelectError, setCountrySelectError] = useState(false);
+    const [competitionNameInputError, setCompetitionNameInputError] = useState(false);
+    const [seasonInputError, setSeasonInputError] = useState(false);
     const [photoError, setPhotoError] = useState(false);
 
-    const [teamId] = useState(route?.params ? route?.params.team.id : null);
-    const [teamName, setteamName] = useState(route?.params ? route?.params.team.name : '');
+    const [competitionId] = useState(route?.params ? route?.params.competition.id : null);
+    const [competitionName, setcompetitionName] = useState(route?.params ? route?.params.competition.name : '');
 
-    const [countries, setCountries] = useState([]);
-    const [countryId, setCountryId] = useState(route?.params ? route?.params.team.country.id.toString() : null);
-
-    const [competitions, setCompetitions] = useState([]);
-    const [competitionsIds, setCompetitionsIds] = useState([]);
+    const [season, setSeason] = useState(route?.params ? route?.params.competition.season : '');
 
     const [dialog, setDialog] = useState(false);
 
-    const [image, setImage] = useState(route?.params ? 'http://btpkq8ic.srv-45-34-12-242.webserverhost.top/storage/teams/' + route?.params.team.name_photo : null);
+    const [image, setImage] = useState(route?.params ? 'http://btpkq8ic.srv-45-34-12-242.webserverhost.top/storage/competitions/' + route?.params.competition.name_photo : null);
 
     useEffect(() => {
-        loadCountries();
-        loadCompetitions();
         permissionImage()
-
-        route?.params && route?.params.team.competitions.forEach(comp => setCompetitionsIds(oldArray => [...oldArray, comp.id ]) );
     }, [])
 
     const pickImage = async () => {
@@ -73,86 +60,42 @@ export default function Form({ route }) {
         }
     }
 
-    const loadCountries = async () => {
-        setCountries([]);
-        setLoading(true);
-        await api.get('country').then(response => {
-            response.data.countries.forEach(country => {
-                setCountries(oldArray => [...oldArray, {
-                    label: country.name,
-                    value: country.id,
-                }]);
-            })
-            setLoading(false);
-        }).catch((error) => {
-            console.log(error.response.data)
-            setLoading(false);
-        })
-    }
-
-    const loadCompetitions = async () => {
-        setCompetitions([]);
-        setLoading(true);
-        await api.get('competition').then(response => {
-            setCompetitions(response.data.competitions);
-            setLoading(false);
-        }).catch((error) => {
-            console.log(error.response.data)
-            setLoading(false);
-        })
-    }
-
-    const removeErrorAndSelectCountry = (index, value) => {
-        setCountryId(index);
-        setCountrySelectError(false)
-    }
-    
-    const activeCompetition = (id) => {
-        if( competitionsIds.filter(comp => comp === id).length > 0 ){
-            setCompetitionsIds( competitionsIds.filter(comp => comp !== id) )
-        } else {
-            setCompetitionsIds(oldArray => [...oldArray, id ]);
-        }
-    }
-
     const save = async () => {
-        setTeamNameInputError(!teamName);
-        setCountrySelectError(!countryId);
+        setCompetitionNameInputError(!competitionName);
+        setSeasonInputError(!season);
         setPhotoError(!image)
 
-        if(!teamName || !countryId || !image){
+        if(!competitionName || !season || !image){
             return;
         }
 
         Keyboard.dismiss();
         setLoading(true);
 
-        let team = new FormData()
-        team.append('id', teamId)
-        team.append('name', teamName)
-        team.append('country_id', countryId)
-        team.append('competitions', JSON.stringify(competitionsIds) )
+        let competition = new FormData()
+        competition.append('name', competitionName)
+        competition.append('season', season)
         if(image){
-            let filename = teamName + image.split('/').pop();
+            let filename = competitionName + image.split('/').pop();
             let match = /\.(\w+)$/.exec(filename);
             let type = match ? `image/${match[1]}` : `image`;
-            team.append('photo', { uri: image, name: filename, type });
+            competition.append('photo', { uri: image, name: filename, type });
         }
 
         let headers =  { header: { 'content-type': 'multipart/form-data' } };
 
-        if(teamId){
-            await api.post(`team/updateWithImage/${teamId}`, team, headers)
-            .then(()  => navigation.navigate('Team', { refresh: new Date }) ) 
+        if(competitionId){
+            await api.post(`competition/updateWithImage/${competitionId}`, competition, headers)
+            .then(()  => navigation.navigate('Competition', { refresh: new Date }) ) 
         } else {
-            await api.post(`team`, team, headers)
-            .then(() => navigation.navigate('Team', { refresh: new Date  }) )
+            await api.post(`competition`, competition, headers)
+            .then(() => navigation.navigate('Competition', { refresh: new Date  }) )
         }
     }
 
     const deleteItem = async () => {
         setLoading(true);
-        await api.delete(`team/${teamId}`).then(() => navigation.navigate('Team', { refresh: new Date  }))
+        await api.delete(`competition/${competitionId}`).then(() => navigation.navigate('Competition', { refresh: new Date  }))
     }
 
     return (
@@ -162,56 +105,44 @@ export default function Form({ route }) {
                     label: 'Cadastros',
                     route: 'Registrations'
                 }, {
-                    label: 'Time',
-                    route: 'Team'
+                    label: 'Competições',
+                    route: 'Competition'
                 }, {
-                    label: teamId ? 'Alterar' : 'Cadastrar',
+                    label: competitionId ? 'Alterar' : 'Cadastrar',
                 }]}
             />
 
             <Card style={{ height: '97%' }} transparent>
                 <CardTitle 
-                    title={teamId ? 'Alterar' : 'Cadastrar'}
-                    icon={teamId ? 'edit' : 'plus'}
+                    title={competitionId ? 'Alterar' : 'Cadastrar'}
+                    icon={competitionId ? 'edit' : 'plus'}
                 />
 
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <CardBody>
                         <Input
                             label="Nome"
-                            value={teamName}
+                            value={competitionName}
                             onChangeText={(text) => { 
-                                setteamName(text);
-                                setTeamNameInputError(false);
+                                setcompetitionName(text);
+                                setCompetitionNameInputError(false);
                             }}
-                            error={teamNameInputError}
+                            error={competitionNameInputError}
                             errorText="Campo obrigatório"
                             loading={loading}
                         />
 
-                        <Select
-                            icon={'globe'}
-                            label="Países"
-                            itens={countries}
-                            indexValueInitial={countryId}
-                            onItemPress={(index, value) => removeErrorAndSelectCountry(index)}
-                            error={countrySelectError}
-                            errorText="Selecione um país"
+                        <Input
+                            label="Temporada"
+                            value={season}
+                            onChangeText={(text) => { 
+                                setSeason(text);
+                                setSeasonInputError(false);
+                            }}
+                            error={seasonInputError}
+                            errorText="Campo obrigatório"
                             loading={loading}
                         />
-
-                        <List title={"Competições"} loading={loading}>
-                            {competitions && competitions.map(item => (
-                                <ListItem label={`${item.name} | ${item.season}`}>
-                                    <Switch
-                                        leftIcon={"times"}
-                                        rightIcon={"check"}
-                                        value={competitionsIds.filter(comp => comp === item.id).length > 0}
-                                        onValueChange={() => activeCompetition(item.id)}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
 
                         <ImageSelect 
                             image={image} 
@@ -231,11 +162,11 @@ export default function Form({ route }) {
                         color="rgba(0, 255, 0, 0.5)"
                         icon="save"
                         onPress={save}
-                        style={{ width: teamId ? '69%' : '100%' }}
+                        style={{ width: competitionId ? '69%' : '100%' }}
                         loading={loading}
                     />
                     {
-                        teamId ? 
+                        competitionId ? 
                             <Button
                                 label="Deletar"
                                 color="rgba(255, 0, 0, 0.5)"
@@ -255,7 +186,7 @@ export default function Form({ route }) {
                     <CardTitle title={'Confirmar'}/>
 
                     <CardBody>
-                        <Text style={{ fontSize: 15 }}> Excluir {teamName} ?</Text>
+                        <Text style={{ fontSize: 15 }}> Excluir {competitionName} | {season} ?</Text>
                     </CardBody>
 
                     <CardFooter style={{ justifyContent: 'flex-end' }}>

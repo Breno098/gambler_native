@@ -58,7 +58,7 @@ export default function GroupButton({ icon, loading, label, color, disabled, err
                     }
                     {
                         error ? 
-                            <Icon name='exclamation' size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/> 
+                            <Icon name='exclamation' size={15} color={"rgba(255, 0, 0, 1)"} style={{ marginLeft: 8, marginRight: 8 }}/> 
                         :icon && !loading ?
                             <Icon name={icon} size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/>
                         : loading ?

@@ -15,7 +15,7 @@ export default function ImageSelect({ onPress, icon, loading, color, disabled, e
     }, [error])
 
     return (
-        <View>
+        <View style={{ width: '100%', marginBottom: 23 }}>
             <View   
                 style={{
                         borderColor: disabled ? '#eee' : error ? 'rgba(255, 0, 0, 1)' : color ? color : "#525252",
@@ -23,7 +23,7 @@ export default function ImageSelect({ onPress, icon, loading, color, disabled, e
                         borderRadius: 10,
                         backgroundColor: '#fff',
                         width: '100%',
-                        height: 300,
+                        height: 230,
                     }}  
             >
                 {

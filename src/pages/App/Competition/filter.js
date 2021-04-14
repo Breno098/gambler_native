@@ -54,8 +54,8 @@ export default function Filter({ route }) {
                     label: 'Cadastros',
                     route: 'Registrations'
                 }, {
-                    label: 'Times',
-                    route: 'Teams'
+                    label: 'Competições',
+                    route: 'Competitions'
                 }, {
                     label: 'Filtrar e ordenar',
                 }]}
@@ -69,15 +69,6 @@ export default function Filter({ route }) {
                             label={"Nome"}
                             value={filterName}
                             onChangeText={(text) => setFilterName(text) }
-                        />
-
-                        <Select
-                            icon={'users'}
-                            label="País"
-                            itens={countries}
-                            indexValueInitial={filterCountry}
-                            onItemPress={(index, value) => setFilterCountry(index)}
-                            loading={loading}
                         />
                     </CardBody>
 
@@ -99,10 +90,9 @@ export default function Filter({ route }) {
                         label={"Limpar"}
                         mode={"text"}
                         onPress={() => { 
-                            navigation.navigate('Team', {
+                            navigation.navigate('Competition', {
                                 filters: { 
                                     name: '',
-                                    country_id : '',
                                 }, 
                                 orders: { 
                                     name: null,
@@ -115,10 +105,9 @@ export default function Filter({ route }) {
                         label={"Filtrar"}
                         icon={"filter"}
                         onPress={() => { 
-                            navigation.navigate('Team', {
+                            navigation.navigate('Competition', {
                                 filters: { 
                                     name: filterName,
-                                    country_id : filterCountry,
                                 }, 
                                 orders: { 
                                     name: orderName ? true : null,

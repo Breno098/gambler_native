@@ -7,8 +7,8 @@ export default function ScrollMenuItem({ icon, label, ...props }) {
       <TouchableOpacity 
         {...props}
         style={{ 
-          width: 80, 
-          height: 80, 
+          width: 100, 
+          height: 100, 
           backgroundColor: 'rgb(247, 106, 5)', 
           marginLeft: 10,
           borderRadius: 7,

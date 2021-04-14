@@ -15,14 +15,14 @@ function AuthRoutes(){
                 gestureEnabled: false,
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}>
-            <AuthStack.Screen 
+            {/* <AuthStack.Screen 
                 name="Init" 
                 component={Home}
                 options={{ 
                     headerShown: false,
                     gestureDirection: "horizontal-inverted"
                 }}
-            />
+            /> */}
             <AuthStack.Screen 
                 name="Login" 
                 component={Login}

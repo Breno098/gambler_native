@@ -1,11 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TextInput, ActivityIndicator, Animated, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ActivityIndicator, Animated, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Input({ icon, loading, label, color, disabled, error, errorText, style, ...props }) {
+export default function List({ icon, loading, children, title, color, error, errorText, ...props }) {
 
     const [errorAnimated] = useState(new Animated.Value(0));
-    const inputEl = useRef(null);
 
     useEffect(() => {
         if(error === true){
@@ -15,45 +14,40 @@ export default function Input({ icon, loading, label, color, disabled, error, er
     }, [error])
 
     return (
-        <TouchableWithoutFeedback onPress={() => inputEl.current.focus() }>
-            <View style={{ width: '100%', height: 60, paddingTop: 9, marginBottom: 23, ...style }}>
+        <View>
+            <View style={{ width: '100%', height: 150, paddingTop: 9, marginBottom: 23 }}>
                 <View   
                     style={{
-                            borderColor: disabled ? '#eee' : error ? 'rgba(255, 0, 0, 1)' : color ? color : "#525252",
+                            borderColor: error ? 'rgba(255, 0, 0, 1)' : color ? color : "#525252",
                             flexDirection: 'row',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             borderWidth : 1,
                             borderRadius: 10,
                             backgroundColor: '#fff',
                             width: '100%',
+                            height: 150,
                         }}  
                 >
-                    <TextInput 
-                        {...props}
-                        inlineImageLeft="user"
-                        ref={inputEl}
-                        style={{
-                            color: "#000", 
-                            fontSize: 20,
-                            width: '90%',
-                            padding: 10,
-                        }}  
-                        placeholderTextColor='rgba(0, 0, 0, 0.2)'
-                    />
                     {
-                        error ? 
-                            <Icon name='exclamation' size={15} color={"rgba(255, 0, 0, 1)"} style={{ marginLeft: 8, marginRight: 8 }}/> 
-                        :icon && !loading ?
-                            <Icon name={icon} size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/>
-                        : loading ?
-                            <ActivityIndicator size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/>
-                        : null
+                        loading
+                        ?
+                        <ActivityIndicator size={15} color={"#525252"} style={{ marginLeft: 8, marginRight: 8 }}/>
+                        :
+                        <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
+                            <View
+                                style={{
+                                    alignItems: 'center'
+                                }}
+                            >
+                                { children }
+                            </View>
+                        </ScrollView>
                     }
                 </View>
                 {
-                    label ?
+                    title &&
                         <Text 
-                            onPress={() => inputEl.current.focus() }
                             style={{ 
                                 color: "#000", 
                                 fontSize: 15,
@@ -64,12 +58,11 @@ export default function Input({ icon, loading, label, color, disabled, error, er
                                 paddingRight: 10,
                             }}
                         >
-                            {  label ?? '' }
+                            {  title ?? '' }
                         </Text>
-                    : null
                 }
                 {
-                    error ?
+                    error &&
                         <Animated.View style={{
                             width: '100%',
                             marginTop: 5,
@@ -80,9 +73,8 @@ export default function Input({ icon, loading, label, color, disabled, error, er
                                 { errorText ?? '' }
                             </Text>
                         </Animated.View>
-                    : null
                 }
             </View>
-        </TouchableWithoutFeedback>
+        </View>
     );
 }

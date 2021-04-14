@@ -2,89 +2,47 @@ import React, { useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
+import App from '../../../components/App';
+import Button from '../../../components/Button';
 
 export default function Home() {
   const navigation = useNavigation();
 
   return (
-      <View style={styles.container}>
-        <Image style={styles.logo} source={require('../../../images/Logo.png')}/>
+        <App style={{ alignItems: 'center', justifyContent: 'center' }}>
 
-        <Text style={styles.logoText}>
+        <Image 
+          style={{
+            height: 100,
+            width: 100
+          }} 
+          source={require('../../../images/Logo.png')}
+        />
+
+        <Text 
+          style={{
+            fontSize: 35,
+            color: 'rgba(0, 0, 0, 1)',
+            textAlign: 'center',
+            marginBottom: 200
+          }}
+        >
            Fut Gamblers
         </Text>
    
-        <TouchableOpacity
-          style={styles.goSingUp}
+        <Button
+          style={{ marginBottom: 23, width: '95%' }}
+          label="Registrar"
+          mode={"text"}
           onPress={() => navigation.navigate('SignUp')}
-        >
-          <Text style={styles.goSingUpText}>
-            Registrar
-          </Text>
-        </TouchableOpacity>
+        />
 
-        <TouchableOpacity
-          style={styles.goLogin}
+        <Button
+          label="Login"
+          color="rgba(0, 255, 0, 0.5)"
+          style={{ width: '95%' }}
           onPress={() => navigation.navigate('Login')}
-        >
-          <Text style={styles.goLoginText}>
-            Login
-          </Text>
-        </TouchableOpacity>
-      </View>
+        />
+      </App>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#00f018',
-    width: '100%'
-
-    // rgba(0, 0, 0, 1,)
-  },
-
-  logo: {
-    height: 100,
-    width: 100
-  },
-
-  logoText: {
-    fontSize: 35,
-    color: 'rgba(0, 0, 0, 1)',
-    textAlign: 'center',
-    marginBottom: 200
-  },
-
-  goSingUp: {
-    borderColor: 'rgba(0, 0, 0, 1)',
-    borderWidth: 1,
-    height: 60,
-    width: '85%',
-    borderRadius: 25,
-    justifyContent: 'center',
-  },
-
-  goSingUpText: {
-    fontSize: 25,
-    color: 'rgba(0, 0, 0, 1)',
-    textAlign: 'center',
-  }, 
-
-  goLogin: {
-    height: 60,
-    width: '85%',
-    borderRadius: 25,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    marginTop: 35
-  },
-
-  goLoginText: {
-    fontSize: 25,
-    textAlign: 'center',
-    color: '#00f018'
-  }
-});

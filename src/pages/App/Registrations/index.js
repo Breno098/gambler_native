@@ -25,12 +25,7 @@ export default function Registrations() {
         <ScrollMenu>
           <ScrollMenuItem 
             icon="futbol-o"
-            label="Jogos"
-          />
-          <ScrollMenuItem 
-            icon="globe" 
-            onPress={() => navigation.navigate('Country', { refresh: new Date })}
-            label="País"
+            label="Jogo"
           />
           <ScrollMenuItem 
             icon="user"
@@ -38,9 +33,19 @@ export default function Registrations() {
             onPress={() => navigation.navigate('Player', { refresh: new Date })}
           />
           <ScrollMenuItem 
+            icon="trophy"
+            label="Competição"
+            onPress={() => navigation.navigate('Competition', { refresh: new Date })}
+          />
+          <ScrollMenuItem 
             icon="users"
             label="Time"
             onPress={() => navigation.navigate('Team', { refresh: new Date })}
+          />
+          <ScrollMenuItem 
+            icon="globe" 
+            onPress={() => navigation.navigate('Country', { refresh: new Date })}
+            label="País"
           />
           <ScrollMenuItem 
             icon="flag"

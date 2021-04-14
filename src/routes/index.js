@@ -17,5 +17,5 @@ export default function Routes(){
         )
     }
 
-    return !_user ? <AppRoutes/> : <AuthRoutes/>;
+    return _user ? <AppRoutes/> : <AuthRoutes/>;
 }
